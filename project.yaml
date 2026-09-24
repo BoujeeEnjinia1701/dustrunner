@@ -1,0 +1,17 @@
+# Card metadata consumed by https://amishchadha.com
+name: DustRunner
+slug: dustrunner
+area: CleanTech
+status: concept          # concept | design | prototype | tested | released
+shortlisted: false
+pitch: >-
+  Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
+problem: >-
+  Soiling cuts output of PV arrays in dusty regions by 15 to 25%, and water for washing is scarce.
+budget_usd: 500
+difficulty: 4  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [cleantech, open-hardware, cern-ohl-s]
