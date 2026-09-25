@@ -69,3 +69,62 @@ Requirements not met or not shown:
 ### Recommended next step
 
 Review this note and the media, then decide items 1, 3, 7 and 8. If approved, run `/advance-trl3` to check the brush power, traction, wind and frame-load estimates by calculation and produce the parametric model and drawing sheet.
+
+## Session 2026-09-25: TRL 3
+
+Amish approved all TRL 2 recommendations on 2026-09-25 ("proceed with all of your recommendations across all batches. Make sure we don't proceed to TRL 4 on any of them."). This session advanced DustRunner to TRL 3 and stopped there.
+
+### What was done
+
+- `docs/decisions/0001-trl2-review-decisions.md` (DRN-DDR-001 v0.1): decisions D1 to D12 recorded as "Decided by Amish, 2026-09-25: go with recommendation"; O1 (pilot partner) left open.
+- `docs/01-problem.md`, `docs/02-concept.md`, `docs/03-requirements.md` revised to v0.3: problem line reworded, design choices no longer "proposed", R14 restated for rows of 60 m or more, R13 now covers the anemometer, every number replaced by DRN-CAL-001 values.
+- `docs/04-calcs/01-sizing.md` (DRN-CAL-001 v0.1) and `docs/04-calcs/sizing.py`: mass, brush contact and core deflection, wheel loads, traction, frame steps, wind, beam, energy, coverage, stopping, cost and payback, with a status for every requirement. The script imports the model and reads the BOM and budget.
+- `cad/src/model.py`: parametric build123d model (robot, dock, end stops, reference module) exporting `cad/step/dustrunner-{robot,dock,end-stop,assembly}.step` and `cad/stl/dustrunner-{robot,dock,end-stop}.stl`.
+- `cad/src/sheets.py` and `cad/drawings/DRN-DWG-001.{svg,pdf,png}`: general arrangement at Rev P1 (top and front views at 1:20, section A-A at 1:5, isometric, interface notes), marked "CONCEPT, NOT FOR FABRICATION" and "PRELIMINARY, NOT FOR FABRICATION". The concept sheet stays DRN-DWG-010, so DWG-001 was free.
+- `bom/bom.csv`: 16 lines, all priced with a supplier type; item 16 (dock anemometer) added. `bom/bom-notes.md` updated.
+- `cad/src/concept_media.py` now builds the robot, dock and end stops from `model.py`; all media re-rendered and checked (hero, blueprint, exploded with callout 16, cutaway, flow, GLB and viewer). No `_views` folders remain.
+- `project.yaml`: `trl: 3`, `trl_target: 3`, `trl_evidence` lists the docs, DDR, CAL note and script, model, STEP files, drawing and BOM; problem line reworded. `README.md` matches.
+
+### Requirements at TRL 3 (DRN-CAL-001, Table 8)
+
+Six met, five at risk, none not met, four not verifiable at TRL 3.
+
+| Status | Requirements |
+| --- | --- |
+| Not met | None |
+| At risk | R4 (5 mm frame step: 9 N needed, 14 N spare; tread needs a frame flange of about 21 mm or more); R9 (traction margin 1.10 in an 8 m/s wind along the row at friction 0.4, 0.82 at friction 0.3); R10 (13.8 kg and 58 N per wheel brushing, but about 72 N for about a second at row entry); R11 (pack may exceed its 45 °C charge limit in the sun); R13 ($500.00 against $500, no margin) |
+| Not verifiable at TRL 3 | R2 (cleaning effectiveness), R3 (abrasion; the geometry is met), R6 (installation time), R15 (sleeve change time) |
+| Met | R1, R5 (98.4 %), R7 (17.4 min), R8 (67 of 102 Wh), R12 (0.13 s), R14 (2.8 years on a 60 m row) |
+
+Key numbers: robot 13.8 kg; 67 W while cleaning; 7.4 min and 7.6 Wh per cycle on the 40 m row; 17.4 min on a 100 m row; parked at 35 m/s, 555 N along the row and 137 N net lift, held with factors over 4; payback 4.1 years on the 40 m row, 2.8 years on 60 m, 3.5 years on 60 m if sleeves are replaced every year.
+
+Changes forced by the calculations: the brush core grows from 40 to 50 mm (a 40 mm core lets the interference fall to 2.8 mm mid-span, outside R3); hook preload set at 70 N per truck (highest value keeping brushing wheel loads at 60 N or less); hood thinned to 0.8 mm; a sunshade added over the pack. Mass rose from about 12 kg to 13.8 kg.
+
+### Decisions recorded
+
+D1 to D12 in DRN-DDR-001: full-width robot on 1P frames; evening cleaning gated by humidity; anemometer at the dock; 20 W dock charging; both wheels driven with preloaded hook rollers; 12.8 V LiFePO4, no SwapCell; 40 m reference row kept; R14 restated for rows of 60 m or more; budget kept at $500 with the problem line reworded; 1P portrait 2,278 mm modules first; mechanical end stops kept; dry microfiber without airflow. The SwapCell interface v0.3 items do not apply because DustRunner uses its own pack.
+
+### Proposed, awaiting Amish
+
+1. **Pilot site and co-design partner (O1).** No recommendation; to be picked per area later.
+2. **Start wind limit (new, from C4 and C7).** Options: (a) keep 8 m/s and accept a traction margin of about 1.1; (b) start a run only below 6 m/s at the dock anemometer and keep 8 m/s as the abort limit; (c) raise the hook preload, which breaks the 60 N wheel-load target. Recommendation: (b), revisited once friction is measured. This changes the R9 target, so it is Amish's.
+3. **Row-entry wheel load (new, from C2).** Options: (a) restate R10 to allow about 75 N for the brief row-entry transient, subject to the module maker's frame guidance; (b) add a glass-height landing strip at the dock end so the brush is loaded on entry (small cost, over budget); (c) lower the preload to about 55 N and accept less traction. Recommendation: (a).
+4. **Cost contingency (new, from I1).** The BOM uses the whole $500. Options: keep $500 and treat R13 as at risk until quotes exist; or raise `budget_usd` to about $550 to hold a 10 % contingency. Recommendation: keep $500 for now; decide on quotes. `budget_usd` is unchanged.
+
+### Safety concerns
+
+- Unattended rotating brush, belts and wheels that start on a timer: guards, a stop button on each truck, an audible start warning and a lockout at the dock. Stopping time is well inside 2 s on paper.
+- A 13.8 kg robot falling from up to 1.6 m: end stops and the dock latch hold with factors over 4, but traction in wind along the row is marginal; the start wind limit (item 2) matters for safety as well as function.
+- Live PV strings at several hundred volts DC: nothing on the robot may touch cables, connectors or junction boxes; damaged glass exposes live parts.
+- LiFePO4 pack parked in the sun: BMS with low- and high-temperature charge cut-offs, fused output, sunshade and ventilation (R11 at risk).
+- Hot glass and frames up to about 75 °C; module warranty risk from cleaning tools the maker has not cleared.
+
+### Other notes
+
+- No existing TRL 4 material was found (the `build-log/` folder holds only its README and was not touched).
+- The review note listed no unchecked citations, so none were re-verified in this session.
+- Friction coefficients, brush pile pressure and the visible frame flange width are assumptions; they drive R4, R9 and the brush power.
+
+### Recommended next step
+
+Decide items 2 to 4 above and name a pilot partner when ready. **TRL 4 is on hold by Amish's instruction**, and no TRL 4 work was started. For reference only, TRL 4 would need: measured friction of polyurethane on dusty frames and measured brush pile pressure and drag; a survey of target module frame profiles; a lab test article of one end truck on a frame section, and of the brush on sample glass (effectiveness and abrasion); a pack temperature check in the dock; a test report (TST, `environment: lab`) and build log entries.

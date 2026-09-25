@@ -2,17 +2,28 @@
 name: DustRunner
 slug: dustrunner
 area: CleanTech
-trl: 2                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
+trl: 3                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
 trl_target: 3
 trl_evidence:
   - docs/01-problem.md
   - docs/02-concept.md
   - docs/03-requirements.md
+  - docs/decisions/0001-trl2-review-decisions.md
+  - docs/04-calcs/01-sizing.md
+  - docs/04-calcs/sizing.py
+  - cad/src/model.py
+  - cad/step/dustrunner-assembly.step
+  - cad/step/dustrunner-robot.step
+  - cad/step/dustrunner-dock.step
+  - cad/step/dustrunner-end-stop.step
+  - cad/drawings/DRN-DWG-001.svg
+  - cad/drawings/DRN-DWG-001.pdf
+  - bom/bom.csv
 shortlisted: false
 pitch: >-
   Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
 problem: >-
-  Soiling cuts output of PV arrays in dusty regions by 15 to 25%, and water for washing is scarce.
+  Soiling cuts output of PV arrays in dusty regions by up to 15 to 25% a month in the dusty season, and water for washing is scarce.
 budget_usd: 500
 difficulty: 4  # 1 easiest, 5 hardest
 hero_image: media/hero.png

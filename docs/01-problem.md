@@ -3,7 +3,7 @@ doc_id: DRN-PRB-001
 title: DustRunner problem statement
 project: DustRunner
 doc_type: Problem statement
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -17,15 +17,19 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Populate to TRL 2 (problem, users, context, constraints, prior work)
+- version: "0.3"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Apply DRN-DDR-001 (problem line reworded to a monthly loss in the dusty season; first table format decided; pilot partner still open)
 ---
 
 # DustRunner problem statement
 
-Soiling cuts output of PV arrays in dusty regions by 15 to 25%, and water for washing is scarce. Utility-scale plants solve this with water-free cleaning robots, but small and mid-size ground-mounted arrays of tens of kilowatts, which are common on farms, mini-grids and commercial sites in the same regions, are still washed by hand with water or left dirty.
+Soiling cuts output of PV arrays in dusty regions by up to 15 to 25% a month in the dusty season, and water for washing is scarce. Utility-scale plants solve this with water-free cleaning robots, but small and mid-size ground-mounted arrays of tens of kilowatts, which are common on farms, mini-grids and commercial sites in the same regions, are still washed by hand with water or left dirty.
 
 ## The problem
 
-Dust settles on PV glass every day. In desert climates the loss grows quickly between cleanings. Qatar's QEERI test facility measured a soiling rate of about 0.49 % per day on fixed-tilt modules, about 13 % a month without rain or cleaning, and losses of up to 60 % over long uncleaned periods ([PV Tech, "Challenges of PV soiling in desert climates"](https://www.pv-tech.org/challenges-of-pv-soiling-in-desert-climates/)). A 2026 study for Arar, Saudi Arabia, used monthly losses of 3 to 5 % in winter rising to 11 to 18 % in summer ([Alharbi, Energies 19(18) 4373](https://www.mdpi.com/1996-1073/19/18/4373)). The 15 to 25 % in the summary above is therefore typical of an array left for a month or more in the dusty season, not a year-round average.
+Dust settles on PV glass every day. In desert climates the loss grows quickly between cleanings. Qatar's QEERI test facility measured a soiling rate of about 0.49 % per day on fixed-tilt modules, about 13 % a month without rain or cleaning, and losses of up to 60 % over long uncleaned periods ([PV Tech, "Challenges of PV soiling in desert climates"](https://www.pv-tech.org/challenges-of-pv-soiling-in-desert-climates/)). A 2026 study for Arar, Saudi Arabia, used monthly losses of 3 to 5 % in winter rising to 11 to 18 % in summer ([Alharbi, Energies 19(18) 4373](https://www.mdpi.com/1996-1073/19/18/4373)). The "up to 15 to 25 % a month" in the summary above is therefore the loss of an array left uncleaned for a month or more in the dusty season, not a year-round average.
 
 Worldwide, soiling cost at least 3 to 4 % of solar production in 2018, about 3 to 5 billion euros of revenue, with 4 to 7 % projected for 2023 ([Ilse et al., Joule 3, 2303 to 2321, 2019](https://www.cell.com/joule/fulltext/S2542-4351(19)30422-2); [open access PDF](https://elib.dlr.de/129424/1/Joule-ils.pdf)).
 
@@ -60,11 +64,13 @@ The gap DustRunner targets is an open, garage-buildable robot for one small row 
 
 ## Constraints
 
-- Garage-buildable prototype, about $500 USD for one robot and its dock, using off-the-shelf motors, aluminum sections and hobby electronics.
+- Garage-buildable prototype, $500 USD (`budget_usd`) for one robot, its dock and its anemometer, using off-the-shelf motors, aluminum sections and hobby electronics.
 - Must not void or endanger module warranties. Manufacturers forbid abrasive cleaning and some require prior approval of motorized cleaning tools; First Solar, for example, reviews automated tools and gives no warranty for modules damaged by cleaning ([First Solar module cleaning guidelines](https://www.firstsolar.com/-/media/First-Solar/Technical-Documents/Series-4-Application-Note/Module-Cleaning-Guidelines.ashx?la=en)). Abrasion of anti-reflective coatings by robots is still being studied in the field ([PV Tech](https://www.pv-tech.org/challenges-of-pv-soiling-in-desert-climates/); [Ilse et al., 2019](https://elib.dlr.de/129424/1/Joule-ils.pdf)).
 - No drilling of modules or of the mounting structure; only clamp-on parts.
 - Works on an energized array. PV strings can carry DC voltages of several hundred volts, so the robot must never touch cables, connectors or junction boxes.
 - No water and no consumables other than replaceable microfiber.
+
+> **Safety:** DustRunner is unattended moving machinery with a lithium iron phosphate battery, working on an energized PV array on hot glass up to about 1.6 m above the ground. The hazards and the measures against them are in DRN-PRC-001, Safety.
 
 ## Out of scope
 
@@ -75,6 +81,6 @@ The gap DustRunner targets is an open, garage-buildable robot for one small row 
 
 ## Open questions
 
-- Which pilot site and partner to design with first (a solar pumping farm, a mini-grid operator or a university test array)? Proposed, awaiting Amish.
-- Which module and table formats to support first? Proposed: 1P portrait tables of 2,278 mm modules, awaiting Amish.
+- Which pilot site and co-design partner to work with first (a solar pumping farm, a mini-grid operator or a university test array)? Proposed, awaiting Amish; partners are to be picked per area later.
+- First module and table format: decided by Amish on 2026-09-25 as 1P portrait tables of 2,278 mm modules (DRN-DDR-001, D10). The visible frame flange width of target modules still needs a survey (DRN-CAL-001, C12).
 - Is daily dry cleaning effective on the local dust, or does dew cementation limit it? This needs site dust data and later testing.

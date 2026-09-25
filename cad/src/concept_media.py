@@ -1,7 +1,9 @@
-"""DustRunner concept massing model and media (TRL 2).
+"""DustRunner concept media (refreshed at TRL 3 from the parametric model).
 
 Run from the repo root:  python cad/src/concept_media.py
-Proportions and main parts only; not for fabrication.
+The robot, dock and end stops come from cad/src/model.py (PARAMS), so the media match the
+STEP files, drawing DRN-DWG-001 and DRN-CAL-001. The reference table (modules, purlins,
+posts) is drawn here for context only. Not for fabrication.
 
 The robot is modeled in the plane of the PV table, in local coordinates (mm):
     u  along the row (the direction of travel)
@@ -19,29 +21,24 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / ".kit"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build123d import Box, Cylinder, Pos, Rot, Solid, Plane, Vector
 import concept
 from concept import Part, render_all, human_figure
+from model import PARAMS as MP, robot_parts, dock_parts, stop_parts
 
 # ---------------- reference table (grey or blue, no BOM number) ----------------
-MOD_L, MOD_W, GAP = 2278.0, 1134.0, 20.0   # module slope length, width along row, gap between modules
+MOD_L, MOD_W, GAP = MP["mod_l"], MP["mod_w"], MP["gap"]   # module slope length, width along row, gap
 N_MOD = 3                                   # modules shown (a real reference row is about 35)
 ROW_L = N_MOD * MOD_W + (N_MOD - 1) * GAP
-TILT = 25.0                                 # table tilt, degrees
-H0 = 600.0                                  # lower glass edge above ground
-FRAME_W = 25.0                              # visible frame flange width
-FRAME_T = 33.0                              # frame depth; frame top 1 mm proud of the glass
+TILT = MP["tilt"]                           # table tilt, degrees
+H0 = MP["h0"]                               # lower glass edge above ground
+FRAME_W = MP["lip"]                         # visible frame flange width
+FRAME_T = MP["frame_d"]                     # frame depth; frame top 1 mm proud of the glass
 
-# ---------------- robot dimensions ----------------
-BRUSH_R = 60.0                              # 120 mm microfiber brush
-BRUSH_V = (40.0, MOD_L - 40.0)              # brushed band up the slope
-PLATE_V = (-30.0, -22.0)                    # lower end-truck plate, outboard of the frame face (v = 0)
-PLATE_HALF_U = 150.0
-WHEEL_R, WHEEL_U = 35.0, 100.0
-BEAM_W = (138.0, 218.0)
-
+# ---------------- robot placement ----------------
+PLATE_HALF_U = MP["plate_half_u"]
 U_ROBOT = MOD_W + GAP + 0.5 * MOD_W        # robot shown mid-way along module 2, moving toward +u
-U_PARK = -625.0                             # robot center when parked in the dock
 
 TABLE_GREY = "#9CA3AF"
 FRAME_SILVER = "#B8C0C8"
@@ -123,85 +120,13 @@ def posts_world():
     return posts
 
 
-# ---------------- robot (local, centered at u = 0) ----------------
-def lower_truck():
-    plate = bx(-PLATE_HALF_U, PLATE_HALF_U, *PLATE_V, -56, 250)
-    hook_arm = bx(-15, 15, PLATE_V[0], 24, -56, -48)
-    axles = cyl_v(-WHEEL_U, WHEEL_R + 1, PLATE_V[1], 3, 6) + cyl_v(WHEEL_U, WHEEL_R + 1, PLATE_V[1], 3, 6)
-    wheels = cyl_v(-WHEEL_U, WHEEL_R + 1, 3, 23, WHEEL_R) + cyl_v(WHEEL_U, WHEEL_R + 1, 3, 23, WHEEL_R)
-    return plate + hook_arm + axles + wheels
-
-
-def lower_rollers():
-    guides = cyl_w(-60, -11, -28, -4, 11) + cyl_w(60, -11, -28, -4, 11)
-    hook = cyl_v(0, -FRAME_T + 1 - 8, 3, 21, 8)
-    return guides + hook
-
-
+# ---------------- robot, dock and end stops from the parametric model (local) ----------------
 def robot_local(u=0.0):
-    P = Pos(u, 0, 0)
-    brush = cyl_v(0, BRUSH_R + 2, *BRUSH_V, BRUSH_R) + cyl_v(0, BRUSH_R + 2, PLATE_V[1], MOD_L - PLATE_V[1], 10)
-    hood = (cyl_v(0, BRUSH_R + 2, BRUSH_V[0], BRUSH_V[1], 76) - cyl_v(0, BRUSH_R + 2, BRUSH_V[0] - 1, BRUSH_V[1] + 1, 72)) \
-        & bx(-80, 80, BRUSH_V[0], BRUSH_V[1], BRUSH_R + 2, 200)
-    beam = bx(-20, 20, PLATE_V[1], MOD_L - PLATE_V[1], *BEAM_W)
-    trucks = lower_truck() + mirror_v(lower_truck())
-    rollers = lower_rollers() + mirror_v(lower_rollers())
-    brush_motor = bx(-35, 35, -95, PLATE_V[0], 30, 100)
-    drive_lo = cyl_v(WHEEL_U, WHEEL_R + 1, -80, PLATE_V[0], 22)
-    drive_motors = drive_lo + mirror_v(drive_lo)
-    sensor = lambda s: bx(s * 150, s * 176, -30, 20, 45, 65)
-    sensors = sensor(1) + sensor(-1)
-    sensors = sensors + mirror_v(sensors)
-    battery = bx(-45, 45, 250, 430, BEAM_W[1], BEAM_W[1] + 100)
-    controller = bx(-40, 40, 480, 620, BEAM_W[1], BEAM_W[1] + 55)
-    sens_lo = sensor(1) + sensor(-1)
-    split = dict(trucks_lo=lower_truck(), trucks_hi=mirror_v(lower_truck()),
-                 rollers_lo=lower_rollers(), rollers_hi=mirror_v(lower_rollers()),
-                 drive_motors_lo=drive_lo, drive_motors_hi=mirror_v(drive_lo),
-                 sensors_lo=sens_lo, sensors_hi=mirror_v(sens_lo))
-    return {k: P * s for k, s in dict(beam=beam, brush=brush, hood=hood, brush_motor=brush_motor, trucks=trucks,
-                                      drive_motors=drive_motors, rollers=rollers, battery=battery,
-                                      controller=controller, sensors=sensors, **split).items()}
-
-
-# ---------------- dock at the start of the row, end stop at the far end (local) ----------------
-DOCK_U0 = -1300.0                           # far end of the dock (panel bay beyond the parking rails)
-
-
-def dock_local():
-    rails = bx(-800, -20, 0, 25, -FRAME_T + 1, 1) + bx(-800, -20, MOD_L - 25, MOD_L, -FRAME_T + 1, 1)
-    cross = None
-    for u0 in (DOCK_U0, -800, -120):
-        c = bx(u0, u0 + 40, 30, MOD_L - 30, -100, -60)
-        cross = c if cross is None else cross + c
-    brackets = None
-    for u0 in (-800, -120):
-        for v0 in (30, MOD_L - 60):
-            b = bx(u0, u0 + 40, v0, v0 + 30, -60, -FRAME_T + 1)
-            brackets = b if brackets is None else brackets + b
-    clamps = bx(-60, 60, 30, 70, -50, -FRAME_T + 1) + bx(-60, 60, MOD_L - 70, MOD_L - 30, -50, -FRAME_T + 1)
-    clamps = clamps + bx(-60, -20, 30, 70, -FRAME_T + 1, -FRAME_T + 11)
-    # panel bay: two side members from the far cross member to the parking cross member
-    bay = bx(DOCK_U0, -760, 90, 130, -60, -40) + bx(DOCK_U0, -760, 600, 640, -60, -40)
-    frame = rails + cross + brackets + clamps + bay
-    panel = bx(-1225, -875, 100, 630, -40, -15)
-    charge = bx(DOCK_U0, DOCK_U0 + 100, 700, 800, -60, 0) + bx(-800, -785, -30, 25, 1, 70)
-    return frame, panel, charge
-
-
-def dock_legs_world():
-    legs = None
-    for u, v in ((-780, 300), (DOCK_U0 + 20, 300), (-780, 1950), (DOCK_U0 + 20, 1950)):
-        top = t_vec(u, v, -100) + np.array([0, 0, H0])
-        leg = tube3((top[0], top[1], 0), tuple(top), 25)
-        legs = leg if legs is None else legs + leg
-    return legs
+    return {k: Pos(u, 0, 0) * v for k, v in robot_parts(MP).items()}
 
 
 def stop_local(u_end):
-    lo = bx(u_end - 40, u_end, 0, 25, 1, 50) + bx(u_end - 40, u_end, 0, 25, -60, -FRAME_T + 1) + \
-        bx(u_end - 40, u_end, -12, 0, -60, 50)
-    return lo + mirror_v(lo)
+    return stop_parts(u_end, MP)
 
 
 # ---------------- BOM numbering (matches bom/bom.csv) ----------------
@@ -223,13 +148,15 @@ DOCK_BOM = [
     ("panel", 12, "Dock PV panel, 20 W", "#3B82F6"),
     ("charge", 13, "Dock charger and contacts", "#16A34A"),
     ("stop", 14, "End stops (pair)", "#B91C1C"),
+    ("anemometer", 16, "Dock anemometer", "#DB2777"),
 ]
 NAMES = {k: (n, name, col) for k, n, name, col in BOM + DOCK_BOM}
 
 frames, glass, dust, purlins, rafters = table_local()
 robot = robot_local(U_ROBOT)
-dock_frame, dock_panel, dock_charge = dock_local()
-dock = {"dock": dock_frame, "panel": dock_panel, "charge": dock_charge, "stop": stop_local(ROW_L)}
+dock = dock_parts(MP)
+dock_frame, dock_panel, dock_charge, dock_anem = dock["dock"], dock["panel"], dock["charge"], dock["anemometer"]
+dock["stop"] = stop_local(ROW_L)
 
 table_parts = [
     Part("Reference PV modules, frames (not in BOM)", T(frames), FRAME_SILVER, None),
@@ -243,23 +170,20 @@ for key, n, name, col in BOM:
     parts.append(Part(name, T(robot[key]), col, n))
 for key, n, name, col in DOCK_BOM:
     shape = T(dock[key])
-    if key == "dock":
-        shape = shape + dock_legs_world()
     parts.append(Part(name, shape, col, n))
 
 KEY_FIGURES = [
     "Brush 2.2 m long, 120 mm diameter, about 150 rpm; water-free",
-    "Travel 0.2 m/s: 40 m row out and back in about 7 min (estimate)",
-    "About 70 W while cleaning; about 8 Wh per cycle (estimate)",
-    "Robot about 12 kg; about 52 N per wheel on the frames (estimate)",
-    "Robot and dock about $485 in parts (indicative)",
+    "Travel 0.2 m/s: 40 m row out and back in about 7.4 min (DRN-CAL-001)",
+    "About 67 W while cleaning; about 7.6 Wh per cycle (DRN-CAL-001)",
+    "Robot about 13.8 kg; about 55 N per wheel on the frames (DRN-CAL-001)",
+    "Robot, dock and anemometer $500 in parts (indicative)",
 ]
 
-FLOW = {"title": "energy per cleaning cycle, 40 m row out and back, Wh (estimates)", "unit": "Wh",
-        "stages": [("Dock charge in", 8.2), ("Stored in pack", 7.9), ("Pack output", 7.7),
-                   ("Motor input", 7.4), ("Brush and wheels", 4.2)],
-        "losses": [(0, "Charging (4 %)", 0.3), (1, "Pack and wiring (3 %)", 0.2),
-                   (2, "Controller and sensors", 0.3), (3, "Motors and gears (43 %)", 3.2)]}
+FLOW = {"title": "energy per cleaning cycle, 40 m row out and back, Wh (estimates, DRN-CAL-001 F7)", "unit": "Wh",
+        "stages": [("Dock charge in", 7.94), ("Pack output", 7.62), ("Motor input", 7.25), ("Brush and wheels", 4.16)],
+        "losses": [(0, "Charging and pack (4 %)", 0.32), (1, "Controller and sensors", 0.37),
+                   (2, "Motors and gears (43 %)", 3.09)]}
 
 
 def exploded_parts():
@@ -282,10 +206,13 @@ def exploded_parts():
                     ("drive_motors", (350, -520, -460)), ("sensors", (500, -380, -40))):
         add(key, r[key + "_lo"], ev)
         add(key, r[key + "_hi"], (ev[0], -ev[1], ev[2]), numbered=False)
+    dk = dock_parts(MP, legs=False)
+    dock_frame, dock_panel, dock_charge, dock_anem = dk["dock"], dk["panel"], dk["charge"], dk["anemometer"]
     shift = Pos(2300, 0, 0)                     # dock group drawn beside the robot (schematic)
     add("dock", shift * dock_frame, (0, 0, -150))
     add("panel", shift * dock_panel, (0, 0, 250))
     add("charge", shift * dock_charge, (0, 0, 120))
+    add("anemometer", shift * dock_anem, (0, 0, 350))
     stop = stop_local(0.0)
     lo = stop & bx(-100, 100, -100, 200, -200, 200)
     hi = stop & bx(-100, 100, MOD_L - 200, MOD_L + 100, -200, 200)
@@ -300,7 +227,7 @@ def cutaway_detail():
     out = []
     for p in parts:
         s = p.shape & region
-        if s.volume > 1e-6:
+        if s is not None and s.volume > 1e-6:
             out.append(Part(p.name, s, p.color, p.bom))
     return out
 
