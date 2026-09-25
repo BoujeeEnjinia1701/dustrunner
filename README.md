@@ -6,6 +6,10 @@
 
 Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
 
+![DustRunner concept](media/hero.png)
+
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+
 ## Problem
 
 Soiling cuts output of PV arrays in dusty regions by 15 to 25%, and water for washing is scarce.
@@ -14,17 +18,18 @@ Soiling cuts output of PV arrays in dusty regions by 15 to 25%, and water for wa
 
 Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
 
+The robot spans one table from its lower to its upper module edge. End trucks ride on the module frames and hook under the frame lips, so no rails are needed along the row. A 2.2 m microfiber brush sweeps the glass dry once a day, and the robot parks off the glass in a clamp-on dock where a 20 W panel recharges its 12.8 V LiFePO4 pack. First-order estimates for a 40 m, 20 kWp row: about 7 minutes and 8 Wh per cycle, about 12 kg, and about $485 in parts for robot and dock. These are concept estimates, not test results.
+
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 ## Key components
 
-- Brush motor
-- Drive motors (2)
-- Edge-guide rollers
-- 12 V LiFePO4 pack
-- Small PV charger
-- Microcontroller
-- IR edge sensors
+- Microfiber brush, 120 mm x 2.2 m, with brush motor and hood
+- End trucks with belt-linked wheels and two drive gearmotors
+- Edge-guide and hook rollers (the rail-free "clamp")
+- 12.8 V 10 Ah LiFePO4 pack
+- Controller (ESP32 class) and IR edge sensors
+- Clamp-on dock with a 20 W PV panel and charger; clamp-on end stops
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
