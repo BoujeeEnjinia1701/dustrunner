@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use or build on this design, please cite it as below."
+type: software
+title: "DustRunner"
+abstract: "Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge."
+authors:
+  - given-names: Amish
+    family-names: Chadha
+    affiliation: Design Molecule
+repository-code: "https://github.com/BoujeeEnjinia1701/dustrunner"
+url: "https://designmolecule.com"
+license:
+  - CERN-OHL-S-2.0
+  - MIT
+keywords:
+  - open-hardware
+  - cleantech

@@ -3,9 +3,9 @@ doc_id: DRN-PRB-001
 title: DustRunner problem statement
 project: DustRunner
 doc_type: Problem statement
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-09-25'
+date: '2026-09-26'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,6 +21,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Apply DRN-DDR-001 (problem line reworded to a monthly loss in the dusty season; first table format decided; pilot partner still open)
+- version: "0.4"
+  date: '2026-09-26'
+  author: Amish Chadha
+  change: Stronger sources
 ---
 
 # DustRunner problem statement
@@ -29,11 +33,11 @@ Soiling cuts output of PV arrays in dusty regions by up to 15 to 25% a month in 
 
 ## The problem
 
-Dust settles on PV glass every day. In desert climates the loss grows quickly between cleanings. Qatar's QEERI test facility measured a soiling rate of about 0.49 % per day on fixed-tilt modules, about 13 % a month without rain or cleaning, and losses of up to 60 % over long uncleaned periods ([PV Tech, "Challenges of PV soiling in desert climates"](https://www.pv-tech.org/challenges-of-pv-soiling-in-desert-climates/)). A 2026 study for Arar, Saudi Arabia, used monthly losses of 3 to 5 % in winter rising to 11 to 18 % in summer ([Alharbi, Energies 19(18) 4373](https://www.mdpi.com/1996-1073/19/18/4373)). The "up to 15 to 25 % a month" in the summary above is therefore the loss of an array left uncleaned for a month or more in the dusty season, not a year-round average.
+Dust settles on PV glass every day. In desert climates the loss grows quickly between cleanings. Qatar's QEERI test facility measured a soiling rate of about 0.49 % per day on fixed-tilt modules, about 13 % a month without rain or cleaning, and losses of up to 60 % over long uncleaned periods ([PV Tech, "Challenges of PV soiling in desert climates"](https://www.pv-tech.org/challenges-of-pv-soiling-in-desert-climates/)). A 2026 study for Arar, Saudi Arabia, assumed monthly losses of about 4 % in winter rising to 15 % in June and July ([Alharbi, Energies 19(18) 4373](https://www.mdpi.com/1996-1073/19/18/4373)). The "up to 15 to 25 % a month" in the summary above is therefore the loss of an array left uncleaned for a month or more in the dusty season, not a year-round average.
 
 Worldwide, soiling cost at least 3 to 4 % of solar production in 2018, about 3 to 5 billion euros of revenue, with 4 to 7 % projected for 2023 ([Ilse et al., Joule 3, 2303 to 2321, 2019](https://www.cell.com/joule/fulltext/S2542-4351(19)30422-2); [open access PDF](https://elib.dlr.de/129424/1/Joule-ils.pdf)).
 
-Washing with water works but uses water where it is scarcest. Field trials found about 3.5 L to more than 10 L of water used to clean and rinse a single module ([Polywater, "Water consumption in PV panel cleaning"](https://www.polywater.com/wp-content/uploads/2021/08/SPW-Intl-blog-Water-Use-IndiaCA.pdf)). Manual cleaning also needs labor, so small owners stretch the interval: at low tariffs the cost-optimal manual interval can be 60 days or more ([Alharbi, 2026](https://www.mdpi.com/1996-1073/19/18/4373)), and the array runs dirty for most of that time.
+Washing with water works but uses water where it is scarcest. Field trials found about 3.5 L to more than 10 L of water used to clean and rinse a single module ([Polywater, "Water consumption in PV panel cleaning"](https://www.polywater.com/wp-content/uploads/2021/08/SPW-Intl-blog-Water-Use-IndiaCA.pdf)). Manual cleaning also needs labor, so small owners stretch the interval: the cost-optimal manual interval came out at about 60 days, and longer at low tariffs ([Alharbi, 2026](https://www.mdpi.com/1996-1073/19/18/4373)), and the array runs dirty for most of that time.
 
 The underlying gap is that each manual cleaning is expensive, so it happens rarely. A small robot that cleans dry every day changes that trade-off, provided it is cheap enough for one row and does not damage the glass.
 

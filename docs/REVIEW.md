@@ -167,3 +167,17 @@ None. DustRunner uses its own 12.8 V pack (DRN-DDR-001, D6) and no shared module
 ### TRL 4
 
 TRL 4 remains on hold by Amish's instruction. The parts of N1 and N3 that need TRL 4 work (measuring wheel friction on dusty frames, writing firmware beyond a sketch, requesting supplier quotes) are decided but on hold. `trl: 3` and `trl_target: 3` are unchanged.
+
+## Session 2026-09-26: sources strengthened
+
+- "By country or region" in `README.md`: five of six rows had no citation. Each row now carries a verified primary or peer-reviewed source, and the text was trimmed to what the source supports:
+  - Sahel and West Africa: no source, now [Isaacs et al., *Applied Energy*, 2023](https://www.sciencedirect.com/science/article/abs/pii/S0306261923003574) (Harmattan soiling losses above 50 % for decentralized solar; about 21 cleanings a year in Bamako).
+  - India (Rajasthan, Gujarat): no source, now [Press Information Bureau, 8 February 2024](https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2004183&reg=3&lang=2) (PM-KUSUM off-grid solar pumps installed, national and Rajasthan figures).
+  - Chile (Atacama): no source, now [Molina, Falvey and Rondanelli, *Scientific Reports*, 2017](https://www.nature.com/articles/s41598-017-13761-x) (highest long-term irradiance on Earth, very low cloud occurrence).
+  - Australia (inland): no source, now [Geoscience Australia, deserts](https://www.ga.gov.au/scientific-topics/national-location-information/landforms/deserts); the unsupported claim about remote farms and service distances was removed.
+  - US Southwest: removed, because no credible source was verified within this session's search allowance. Australia, Chile and Saudi Arabia remain as high-income examples.
+- Arar figures (Alharbi, *Energies*, 2026): on checking the paper, the adopted monthly losses are about 4 % in winter rising to 15 % in June and July; 11 to 18 % is a literature range quoted for comparison. The README and DRN-PRB-001 (v0.4) now quote the adopted values, and the 60-day manual interval is stated as the base-case optimum, longer at low tariffs.
+- Kept and verified: NASA InSight retirement release (What sparked the idea), Alharbi 2026. Ilse et al., *Joule*, 2019 is peer-reviewed and kept; it could not be re-fetched in this session.
+- Not changed (outside this session's scope): DRN-PRB-001 still cites PV Tech (trade press) alone for the QEERI figures and Polywater (vendor) alone for water per module; both should get primary sources at the next revision.
+- The "Qatar 11 to 18 %" wording in item 10 of the TRL 2 session above predates this correction.
+- No budget change.

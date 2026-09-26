@@ -18,9 +18,9 @@ The design is open and garage-buildable because the owners who need it most, far
 
 ## Burning platform
 
-Soiling cost at least 3 to 4 % of the world's solar electricity production in 2018, worth about 3 to 5 billion euros of lost revenue, with 4 to 7 % projected for 2023 as capacity grows fastest in dusty, sunny regions ([Ilse et al., Joule, 2019](https://www.cell.com/joule/fulltext/S2542-4351(19)30422-2)). The loss is steep where the sun is strongest: a 2026 study for Arar, Saudi Arabia, used monthly soiling losses of 3 to 5 % in winter rising to 11 to 18 % in summer ([Alharbi, Energies, 2026](https://www.mdpi.com/1996-1073/19/18/4373)).
+Soiling cost at least 3 to 4 % of the world's solar electricity production in 2018, worth about 3 to 5 billion euros of lost revenue, with 4 to 7 % projected for 2023 as capacity grows fastest in dusty, sunny regions ([Ilse et al., Joule, 2019](https://www.cell.com/joule/fulltext/S2542-4351(19)30422-2)). The loss is steep where the sun is strongest: a 2026 study for Arar, Saudi Arabia, assumed monthly soiling losses of about 4 % in winter rising to 15 % in June and July ([Alharbi, *Energies*, 2026](https://www.mdpi.com/1996-1073/19/18/4373)).
 
-Washing is the usual fix, and it spends water in the places that have least of it. Because each manual wash costs labor, small owners stretch the interval to 60 days or more at low tariffs (Alharbi, 2026), and the array runs dirty for most of that time. A cheap daily dry pass changes that trade-off.
+Washing is the usual fix, and it spends water in the places that have least of it. Because each manual wash costs labor, the cost-optimal manual interval in the same study came out at about 60 days, and longer at low tariffs ([Alharbi, 2026](https://www.mdpi.com/1996-1073/19/18/4373)), so the array runs dirty for most of that time. A cheap daily dry pass changes that trade-off.
 
 ## Where it could be used
 
@@ -39,12 +39,11 @@ Washing is the usual fix, and it spends water in the places that have least of i
 
 | Country or region | Why it matters there |
 | --- | --- |
-| Saudi Arabia and the Gulf | High dust loads and scarce fresh water; monthly soiling losses of 11 to 18 % in summer have been used for Arar ([Alharbi, 2026](https://www.mdpi.com/1996-1073/19/18/4373)) |
-| Sahel (for example Niger, Mali, Chad) | Harmattan dust and off-grid solar mini-grids and pumps far from service providers |
-| Northwest India (Rajasthan, Gujarat) | Thar desert dust and fast growth of solar pumps and small plants on farms |
-| Chile (Atacama) | Very high irradiation and very little rain, so dust is rarely washed off naturally |
-| US Southwest (Arizona, Nevada, California) | High-income market with dusty, dry sites and water restrictions on washing |
-| Australia (inland) | Remote farms and stations on dry, dusty land with long distances to any service |
+| Saudi Arabia and the Gulf | Desert dust and scarce fresh water; a 2026 study for Arar assumed monthly soiling losses rising to 15 % in June and July ([Alharbi, 2026](https://www.mdpi.com/1996-1073/19/18/4373)) |
+| Sahel and West Africa (for example Niger, Mali) | Harmattan dust from the Sahara can cut the output of decentralized solar and mini-grids by more than 50 % in the dry season, and Bamako needed about 21 cleanings a year to keep losses below 1 % ([Isaacs et al., *Applied Energy*, 2023](https://www.sciencedirect.com/science/article/abs/pii/S0306261923003574)) |
+| India (Rajasthan, Gujarat) | More than 295,000 off-grid solar water pumps had been installed under the PM-KUSUM scheme by January 2024, about 59,700 of them in Rajasthan ([Press Information Bureau, 2024](https://www.pib.gov.in/PressReleaseIframePage.aspx?PRID=2004183&reg=3&lang=2)) |
+| Chile (Atacama) | The Atacama has the highest long-term solar irradiance measured anywhere on Earth, with clouds present less than 5 % of the time in places, so arrays there are rarely washed by rain ([Molina, Falvey and Rondanelli, *Scientific Reports*, 2017](https://www.nature.com/articles/s41598-017-13761-x)) |
+| Australia (inland) | A high-income market where ten deserts cover nearly 20 % of the country, the second driest continent ([Geoscience Australia](https://www.ga.gov.au/scientific-topics/national-location-information/landforms/deserts)) |
 
 ## What sparked the idea
 
@@ -90,6 +89,12 @@ The priced bill of materials is in [bom/bom.csv](bom/bom.csv); the parametric mo
 ## Documentation
 
 Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (DRN-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `DRN-PRC-001/v1.0`.
+
+## Credits
+
+Designed by Amish Chadha. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for roles. To cite this design, use [CITATION.cff](CITATION.cff) (GitHub shows it as "Cite this repository").
+
+AI assistance (Claude) was used to accelerate concept renders, prototype documentation and first-pass sizing calculations. Design direction and all decisions are Amish Chadha's, recorded in this repository's decision records (`docs/decisions/`).
 
 ## Licenses
 
