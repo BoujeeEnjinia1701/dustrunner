@@ -3,7 +3,7 @@ doc_id: DRN-PRC-001
 title: DustRunner design precis
 project: DustRunner
 doc_type: Design precis
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -21,13 +21,17 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: TRL 3 update. Design choices decided per DRN-DDR-001; numbers replaced by DRN-CAL-001 (50 mm brush core, 70 N hook preload, 0.8 mm hood, dock anemometer); model, drawing DRN-DWG-001 and media refreshed
+- version: "0.4"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002). Start wind limit 6 m/s with abort at 8 m/s; row-entry wheel load accepted up to 75 N; budget kept at $500; numbers from DRN-CAL-001 v0.2
 ---
 
 # DustRunner design precis
 
 ## Summary
 
-DustRunner is a rail-free crawler robot that spans one PV table from its lower to its upper module edge, rides along the module frames on two end trucks that hook under the frame lips, and sweeps the glass dry with a 2.2 m rotating microfiber brush. It parks off the glass in a clamp-on dock at the start of the row, where a 20 W panel recharges its 12.8 V LiFePO4 pack and a cup anemometer tells it whether the wind allows a run. The TRL 3 calculations (DRN-CAL-001) give, for the 40 m, 20 kWp reference row, about 7.4 minutes and 7.6 Wh per out-and-back cycle, a robot of about 13.8 kg and $500 in parts for robot, dock and anemometer. Six requirements are met on paper and none is clearly missed, but five are at risk: 5 mm frame steps (R4), traction in an 8 m/s wind (R9), a brief 72 N wheel load at row entry (R10), pack temperature (R11) and a budget with no margin (R13). Payback is 2.8 years on a 60 m row, which meets R14 as restated, and 4.1 years on the 40 m reference row.
+DustRunner is a rail-free crawler robot that spans one PV table from its lower to its upper module edge, rides along the module frames on two end trucks that hook under the frame lips, and sweeps the glass dry with a 2.2 m rotating microfiber brush. It parks off the glass in a clamp-on dock at the start of the row, where a 20 W panel recharges its 12.8 V LiFePO4 pack and a cup anemometer tells it whether the wind allows a run. The TRL 3 calculations (DRN-CAL-001) give, for the 40 m, 20 kWp reference row, about 7.4 minutes and 7.6 Wh per out-and-back cycle, a robot of about 13.8 kg and $500 in parts for robot, dock and anemometer. Seven requirements are met on paper and none is clearly missed, but four are at risk: 5 mm frame steps (R4), traction in wind along the row (R9), pack temperature (R11) and a budget with no margin (R13). A run starts only below 6 m/s at the dock anemometer and aborts above 8 m/s (DRN-DDR-002). Payback is 2.8 years on a 60 m row, which meets R14 as restated, and 4.1 years on the 40 m reference row.
 
 ![Hero render](../media/hero.png)
 
@@ -36,10 +40,10 @@ DustRunner is a rail-free crawler robot that spans one PV table from its lower t
 ## How it works
 
 1. **Park and charge.** Between cycles the robot sits in the dock, a short pair of rails that continue the module frame profile past the end of the row. Parking off the glass means the robot never shades the array. A 20 W panel in the dock charges the pack through spring contacts; a third contact carries the anemometer signal.
-2. **Start.** Once a day, in the evening after the array's output has dropped and before dew forms (DRN-DDR-001, D2), the controller checks pack charge, air humidity and the wind at the dock anemometer, sounds a short warning, then drives out of the dock.
+2. **Start.** Once a day, in the evening after the array's output has dropped and before dew forms (DRN-DDR-001, D2), the controller checks pack charge, air humidity and the wind at the dock anemometer, sounds a short warning, then drives out of the dock. It starts only if the wind is below 6 m/s (DRN-DDR-002, N1).
 3. **Travel.** Two end trucks carry the robot along the row. Each truck has two 70 mm polyurethane wheels on the top flange of the module frame, two guide rollers against the outer face of the frame and a hook roller under the frame's bottom flange, pulled up by springs to 70 N. The trucks are the "clamp": they cannot lift off or slide down the slope, yet need no rail. A gearmotor with an encoder on each truck drives both of that truck's wheels through a toothed belt, and the controller keeps the two ends in step.
 4. **Clean.** A 120 mm microfiber brush on a 50 mm aluminum core spans the slope and turns at about 150 rpm, pressed 4.5 mm into the glass plane at its bearings. A helical pattern on the brush conveys the loosened dust down the slope and off the lower edge. A hood over the brush limits dust thrown back onto clean glass.
-5. **Stop and return.** IR sensors on each truck see the frame end; a clamp-on end stop at the far end is the mechanical backstop. The robot reverses the brush and cleans on the way back, then docks and latches.
+5. **Stop and return.** IR sensors on each truck see the frame end; a clamp-on end stop at the far end is the mechanical backstop. The robot reverses the brush and cleans on the way back, then docks and latches. If the wind reported by the dock rises above 8 m/s during a run, the robot stops the brush and returns to the dock at once.
 
 ![Energy flow](../media/flow.png)
 
@@ -81,17 +85,17 @@ Item 15 (wiring, fuse, switches, stop buttons and fasteners) has no callout.
 
 ## Numbers at TRL 3
 
-All values are from DRN-CAL-001 v0.1, which prints each from `docs/04-calcs/sizing.py`. They are first-principles estimates; the assumptions behind them (pile pressure, friction coefficients, frame flange width) are listed there and must be measured.
+All values are from DRN-CAL-001 v0.2, which prints each from `docs/04-calcs/sizing.py`. They are first-principles estimates; the assumptions behind them (pile pressure, friction coefficients, frame flange width) are listed there and must be measured.
 
 *Table 2. Key numbers.*
 
 | Quantity | Value | Requirement |
 | --- | --- | --- |
-| Robot mass | 13.8 kg | R10 met (15 kg) |
+| Robot mass | 13.8 kg | Within R10 (15 kg) |
 | Brush contact | About 67 N on the glass, 30 N drag, 28 W mechanical (13 to 50 W over the assumed ranges) | |
 | Electrical power while cleaning | 67 W (brush 47 W, drives 17 W, electronics 3 W) | |
-| Wheel load | 55 N brushing at 25°; 58 N at worst tilt; about 72 N for about a second at row entry | R10 at risk |
-| Traction margin, friction 0.4 | 1.84 in still air; 1.10 in an 8 m/s wind along the row | R9 at risk |
+| Wheel load | 55 N brushing at 25°; 58 N at worst tilt; about 72 N for about a second at row entry | R10 met (75 N allowed for the transient, DRN-DDR-002) |
+| Traction margin, friction 0.4 | 1.84 in still air; 1.33 at the 6 m/s start limit; 1.10 at the 8 m/s abort limit (1.00 and 0.82 at friction 0.3) | R9 at risk |
 | 5 mm frame step | About 9 N extra push needed, about 14 N spare | R4 at risk |
 | Parked at 35 m/s | 555 N along the row on a latch rated about 2.8 kN; 137 N net lift on the hook rollers | R9 parked case met |
 | 40 m row, out and back | 7.4 min; 7.6 Wh from the pack | |
@@ -107,7 +111,7 @@ The pack is cycled lightly (under 10 % of capacity a day on the reference row), 
 
 ## Key design choices
 
-Amish decided the design choices below on 2026-09-25 by approving the TRL 2 recommendations (DRN-DDR-001). Choices raised by the TRL 3 calculations are listed after them as proposals.
+Amish decided the design choices below on 2026-09-25 by approving the TRL 2 recommendations (DRN-DDR-001). Amish then accepted the recommendations raised by the TRL 3 calculations (DRN-DDR-002); they are listed after the first set.
 
 - **One robot per row, spanning the full slope** (D1). A full-width robot needs no steering on the glass and cannot fall between modules. The concept is limited to tables whose short edges are free of clamps, as stated in R4.
 - **Ride on the frame edges, not on the glass** (D1, D10). Wheels on the frame keep weight off the glass and coating. The first supported format is 1P portrait tables of 2,278 mm modules.
@@ -120,8 +124,9 @@ Amish decided the design choices below on 2026-09-25 by approving the TRL 2 reco
 - **LiFePO4 at 12.8 V, 10 Ah** (D6). A SwapCell pack is not used: at about 468 Wh and 48 V it is far larger than DustRunner needs.
 - **Reference row and payback target** (D7, D8). The 40 m reference row is kept; R14 applies to rows of 60 m or more.
 - **Budget** (D9). `budget_usd` stays at $500 for robot, dock and anemometer. The priced BOM uses all of it.
-
-Proposed, awaiting Amish (from DRN-CAL-001; details in `docs/REVIEW.md`): a lower wind limit for starting a run, how to treat the 72 N row-entry wheel load, and whether to hold a cost contingency.
+- **Start and abort wind limits** (DRN-DDR-002, N1). A run starts only below 6 m/s at the dock anemometer and aborts above 8 m/s. This is a firmware rule; it lifts the traction margin at the start of a run from 1.10 to 1.33 at friction 0.4 and will be revisited once friction is measured.
+- **Row-entry wheel load** (DRN-DDR-002, N2). R10 allows up to 75 N per wheel for the second or so as the lead wheels enter the first module, subject to the module maker's frame guidance; no landing strip is added and the preload stays at 70 N.
+- **No cost contingency yet** (DRN-DDR-002, N3). `budget_usd` stays at $500 and R13 stays at risk until quotes exist. Getting quotes is purchasing, which is TRL 4 work and on hold.
 
 ## Safety
 
@@ -129,7 +134,7 @@ Proposed, awaiting Amish (from DRN-CAL-001; details in `docs/REVIEW.md`): a lowe
 
 - **Rotating brush and pinch points.** The brush, belts and wheels can catch fingers, hair and clothing. The hood covers the brush ends; each truck has an emergency stop button; the brush stops when a truck lifts off the frame. The brush coasts to rest in about 0.13 s once power is cut (DRN-CAL-001, H1). Nobody should reach under the hood while the robot is powered.
 - **Unexpected start.** The robot runs on a timer with nobody present. It must carry a clear warning label, start only after a short audible warning, and have a lockout switch at the dock.
-- **Falling robot.** A 13.8 kg robot leaving the row end could injure someone below. Two independent stops (IR sensing and the mechanical end stop) and the hook rollers address this (R9). The end stop and dock latch hold with factors above 4 on paper, but traction in wind is marginal, so the start wind limit matters (DRN-CAL-001, C4, D1 to D4).
+- **Falling robot.** A 13.8 kg robot leaving the row end could injure someone below. Two independent stops (IR sensing and the mechanical end stop) and the hook rollers address this (R9). The end stop and dock latch hold with factors above 4 on paper, but traction in wind is marginal, so runs start only below 6 m/s and abort above 8 m/s (DRN-DDR-002; DRN-CAL-001, C4, C13, D1 to D4).
 - **PV array electrical hazard.** Strings carry DC voltages that can be lethal and cannot be switched off in daylight. Nothing on the robot may touch cables, connectors or junction boxes; installation and maintenance follow the array owner's electrical safety rules. Damaged module glass exposes live parts.
 - **Battery.** LiFePO4 is less prone to thermal runaway than other lithium-ion chemistries but can still vent and burn if crushed, shorted or overcharged. Use a pack with a BMS, fuse the pack output, block charging below 0 °C and above about 45 °C, and keep the pack shaded and ventilated (R11 is at risk on pack temperature).
 - **Hot surfaces.** Module glass and frames can reach about 75 °C. Wear gloves when installing or servicing in daylight.

@@ -40,6 +40,8 @@ Requirements not met or not shown:
 
 ### Proposed, awaiting Amish
 
+Status update: items 1 to 8 and 10 were decided by Amish, 2026-09-25: go with recommendation (DRN-DDR-001, D1 to D12). Item 9 has no recommendation and stays proposed, awaiting Amish.
+
 1. **Scope: one full-width robot per row, riding on the frames of 1P portrait tables.** Options: (a) as proposed; (b) a smaller robot that moves on the glass; (c) add a transfer cart between rows. Recommendation: (a). This limits fit to tables whose short module edges are free of clamps.
 2. **Cleaning time.** Options: night (as Ecoppia does), evening before dew forms, or dawn. Recommendation: evening, gated by the humidity sensor.
 3. **Wind input.** Options: (a) anemometer at the dock (about $15, cost about $500); (b) a weather feed over the network; (c) a fixed wind rule from motor current. Recommendation: (a).
@@ -106,10 +108,10 @@ D1 to D12 in DRN-DDR-001: full-width robot on 1P frames; evening cleaning gated 
 
 ### Proposed, awaiting Amish
 
-1. **Pilot site and co-design partner (O1).** No recommendation; to be picked per area later.
-2. **Start wind limit (new, from C4 and C7).** Options: (a) keep 8 m/s and accept a traction margin of about 1.1; (b) start a run only below 6 m/s at the dock anemometer and keep 8 m/s as the abort limit; (c) raise the hook preload, which breaks the 60 N wheel-load target. Recommendation: (b), revisited once friction is measured. This changes the R9 target, so it is Amish's.
-3. **Row-entry wheel load (new, from C2).** Options: (a) restate R10 to allow about 75 N for the brief row-entry transient, subject to the module maker's frame guidance; (b) add a glass-height landing strip at the dock end so the brush is loaded on entry (small cost, over budget); (c) lower the preload to about 55 N and accept less traction. Recommendation: (a).
-4. **Cost contingency (new, from I1).** The BOM uses the whole $500. Options: keep $500 and treat R13 as at risk until quotes exist; or raise `budget_usd` to about $550 to hold a 10 % contingency. Recommendation: keep $500 for now; decide on quotes. `budget_usd` is unchanged.
+1. **Pilot site and co-design partner (O1).** No recommendation; to be picked per area later. Still proposed, awaiting Amish.
+2. **Start wind limit (new, from C4 and C7).** Options: (a) keep 8 m/s and accept a traction margin of about 1.1; (b) start a run only below 6 m/s at the dock anemometer and keep 8 m/s as the abort limit; (c) raise the hook preload, which breaks the 60 N wheel-load target. Recommendation: (b), revisited once friction is measured. This changes the R9 target, so it is Amish's. **Decided by Amish, 2026-09-25: go with recommendation** (DRN-DDR-002, N1).
+3. **Row-entry wheel load (new, from C2).** Options: (a) restate R10 to allow about 75 N for the brief row-entry transient, subject to the module maker's frame guidance; (b) add a glass-height landing strip at the dock end so the brush is loaded on entry (small cost, over budget); (c) lower the preload to about 55 N and accept less traction. Recommendation: (a). **Decided by Amish, 2026-09-25: go with recommendation** (DRN-DDR-002, N2).
+4. **Cost contingency (new, from I1).** The BOM uses the whole $500. Options: keep $500 and treat R13 as at risk until quotes exist; or raise `budget_usd` to about $550 to hold a 10 % contingency. Recommendation: keep $500 for now; decide on quotes. `budget_usd` is unchanged. **Decided by Amish, 2026-09-25: go with recommendation** (DRN-DDR-002, N3).
 
 ### Safety concerns
 
@@ -128,3 +130,40 @@ D1 to D12 in DRN-DDR-001: full-width robot on 1P frames; evening cleaning gated 
 ### Recommended next step
 
 Decide items 2 to 4 above and name a pilot partner when ready. **TRL 4 is on hold by Amish's instruction**, and no TRL 4 work was started. For reference only, TRL 4 would need: measured friction of polyurethane on dusty frames and measured brush pile pressure and drag; a survey of target module frame profiles; a lab test article of one end truck on a frame section, and of the brush on sample glass (effectiveness and abrasion); a pack temperature check in the dock; a test report (TST, `environment: lab`) and build log entries.
+
+## Session 2026-09-25: recommendations accepted
+
+Amish wrote on 2026-09-25: "i accept all your recommendations, go with them across all repos." Every open item with a recommendation is now "Decided by Amish, 2026-09-25: go with recommendation", recorded in `docs/decisions/0002-recommendations-accepted.md` (DRN-DDR-002 v0.1).
+
+### Decisions applied and what changed
+
+| # | Decision | Before | After |
+| --- | --- | --- | --- |
+| N1 | Start a run only below 6 m/s at the dock anemometer; abort at 8 m/s | Operate below 8 m/s; traction margin 1.10 at start (friction 0.4) | Start below 6 m/s: margin 1.33 at friction 0.4, 1.00 at 0.3 [C13]; abort at 8 m/s: 1.10 and 0.82. R9 still at risk |
+| N2 | R10 allows about 75 N per wheel for the row-entry transient | 72 N against a 60 N limit: R10 at risk | 72 N against 75 N (transient), 58 N against 60 N (steady): R10 met |
+| N3 | Keep `budget_usd` at $500; decide contingency on quotes | $500, BOM $500.00 | Unchanged: $500, BOM $500.00; R13 still at risk |
+
+Files changed: DRN-REQ-001 v0.3 to v0.4 (R9 and R10 restated, R13 note); DRN-PRC-001 v0.3 to v0.4 (start and abort rule, design choices, key numbers); DRN-CAL-001 v0.1 to v0.2 and `sizing.py` (new [C13], restated R9 and R10 checks); DRN-DDR-002 v0.1 (new); `project.yaml` (DDR-002 added to `trl_evidence`; `budget_usd`, pitch and problem unchanged); `README.md` (status line and the new write-up sections). Geometry, BOM and prices are unchanged, so DRN-DWG-001 stays at Rev P1; the STEP, STL, drawing, media and PDFs were regenerated.
+
+### Requirement status now (DRN-CAL-001 v0.2)
+
+| Status | Requirements |
+| --- | --- |
+| Not met | None |
+| At risk | R4 (5 mm frame step and flange width); R9 (traction margin 1.33 at the 6 m/s start limit, 1.00 at friction 0.3); R11 (pack charge temperature in the sun); R13 ($500.00 against $500) |
+| Not verifiable at TRL 3 | R2, R3, R6, R15 |
+| Met | R1, R5, R7, R8, R10, R12, R14 |
+
+Counts: 7 met (was 6), 4 at risk (was 5), 0 not met, 4 not verifiable.
+
+### Still awaiting Amish
+
+- O1: pilot site and co-design partner (no recommendation was made).
+
+### Cross-repo actions
+
+None. DustRunner uses its own 12.8 V pack (DRN-DDR-001, D6) and no shared module.
+
+### TRL 4
+
+TRL 4 remains on hold by Amish's instruction. The parts of N1 and N3 that need TRL 4 work (measuring wheel friction on dusty frames, writing firmware beyond a sketch, requesting supplier quotes) are decided but on hold. `trl: 3` and `trl_target: 3` are unchanged.

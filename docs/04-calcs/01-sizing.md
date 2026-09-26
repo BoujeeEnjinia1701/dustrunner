@@ -3,7 +3,7 @@ doc_id: DRN-CAL-001
 title: DustRunner sizing calculations
 project: DustRunner
 doc_type: Calculation
-version: "0.1"
+version: "0.2"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -13,17 +13,21 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: First issue for TRL 3 (mass, brush contact and deflection, wheel loads and traction, wind, beam, energy, coverage, stopping, cost and payback)
+- version: "0.2"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002). Traction margin at the 6 m/s start limit added [C13]; R9 and R10 checked against the restated targets of DRN-REQ-001 v0.4
 ---
 
 # DustRunner sizing calculations
 
-On paper, DustRunner meets six of its fifteen requirements, has five at risk and none clearly not met; four cannot be verified at TRL 3. The five at risk are frame fit (R4), where a 5 mm height step between modules is climbable only with both wheels driven and a thin margin; staying on the row (R9), where traction in an 8 m/s wind along the row is only 1.10 times the resistance at an assumed friction coefficient of 0.4; load on the modules (R10), where the lower wheels carry about 72 N for a moment as the robot enters the first module, above the 60 N target; environment (R11), where the pack may exceed its 45 °C charging limit in the sun; and cost (R13), where the priced BOM is exactly the $500 budget. The calculations also changed three parts of the TRL 2 concept: the brush core grows from 40 mm to 50 mm so that the pile interference stays in the 3 to 5 mm band along the whole brush, the hook preload is set at 70 N per truck, and the hood is thinner (0.8 mm) to hold the mass under 15 kg. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C4], is the line of that script's output that carries it.
+On paper, DustRunner meets seven of its fifteen requirements, has four at risk and none clearly not met; four cannot be verified at TRL 3. The four at risk are frame fit (R4), where a 5 mm height step between modules is climbable only with both wheels driven and a thin margin; staying on the row (R9), where traction at the 6 m/s start limit set by DRN-DDR-002 is 1.33 times the resistance at an assumed friction coefficient of 0.4, but only 1.00 at 0.3, and 1.10 at the 8 m/s abort limit; environment (R11), where the pack may exceed its 45 °C charging limit in the sun; and cost (R13), where the priced BOM is exactly the $500 budget. Load on the modules (R10) is now met: the lower wheels carry about 72 N for a moment as the robot enters the first module, within the 75 N that DRN-DDR-002 allows for that transient. The calculations also changed three parts of the TRL 2 concept: the brush core grows from 40 mm to 50 mm so that the pile interference stays in the 3 to 5 mm band along the whole brush, the hook preload is set at 70 N per truck, and the hood is thinner (0.8 mm) to hold the mass under 15 kg. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C4], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They do not replace tests of traction, wind hold-down, end stops, stopping time, battery temperature or glass abrasion, and nothing may be installed on a live array on the strength of this note. See DRN-PRC-001, Safety.
 
 ## Scope and method
 
-The note checks every requirement in DRN-REQ-001 v0.3 against the design in DRN-PRC-001 v0.3 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS`, `derived()` and part solids, so the beam, brush, hood, trucks, wheels, rollers and enclosures used here are the ones in the STEP files and in drawing DRN-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
+The note checks every requirement in DRN-REQ-001 v0.4 against the design in DRN-PRC-001 v0.4 and the parametric model `cad/src/model.py`. The script imports the model's `PARAMS`, `derived()` and part solids, so the beam, brush, hood, trucks, wheels, rollers and enclosures used here are the ones in the STEP files and in drawing DRN-DWG-001. It also reads `bom/bom.csv` and `budget_usd` in `project.yaml`. Run it from the repo root with `python docs/04-calcs/sizing.py`.
 
 The design case is the reference row of DRN-REQ-001: a 1P portrait table of 2,278 x 1,134 mm modules at 25° tilt, 35 modules long (40.4 m, 20.3 kWp). The robot travels at 0.2 m/s out and back, brushing both ways. Longer rows of 52 modules (60.0 m) and 87 modules (100.4 m) are used for R7, R8 and R14.
 
@@ -37,7 +41,7 @@ The design case is the reference row of DRN-REQ-001: a 1P portrait table of 2,27
 | Brush contact | Mean pile pressure 750 Pa at 4 mm interference (range 500 to 1,000 Pa), treated as a linear spring; friction of microfiber on dry dusty glass 0.45 (range 0.3 to 0.6); 150 rpm | Assumed; the largest uncertainty in the power budget. To measure |
 | Traction | Polyurethane on dusty anodized aluminum, friction 0.4 (range 0.3 to 0.6); rolling coefficient 0.02 for wheels and rollers; along-row grade 2° | Assumed; to measure on real frames |
 | Frame | Top flange 25 mm wide, frame 33 mm deep, top 1 mm proud of the glass | Assumed from the reference module; not from a datasheet |
-| Wind | Air 1.2 kg/m³; side drag coefficient 1.5 on the robot's along-row silhouette; lift coefficient 1.0 on its plan area; normal-force coefficient 1.2 on the dock panel | Bluff-body handbook ranges, conservative |
+| Wind | Start limit 6 m/s and abort limit 8 m/s along the row at the dock anemometer (DRN-DDR-002); air 1.2 kg/m³; side drag coefficient 1.5 on the robot's along-row silhouette; lift coefficient 1.0 on its plan area; normal-force coefficient 1.2 on the dock panel | Bluff-body handbook ranges, conservative |
 | Electrical | Brush drive 60 % efficient, wheel drives 50 %, electronics 3 W running and 0.15 W standby; charging and pack 96 %; 128 Wh pack, 80 % usable | Typical small gearmotors and LiFePO4 packs |
 | Charging | 20 W panel derated to 75 %; 3 sun hours design day, 5.5 typical | DRN-REQ-001 |
 | Yield and value | 5.5 kWh per kWp per day; 0.58 kWp per module; soiling 0.3 %/day (mid) or 0.49 %/day (high); monthly manual wash as the baseline, so its average loss is half the loss at 30 days; 1.5 % residual loss with daily cleaning (R2, unverified); $0.10/kWh | DRN-REQ-001 and DRN-PRB-001 |
@@ -78,19 +82,21 @@ The model has no solid other than the brush sleeve within 10 mm of the glass: th
 | Brushing at 10° tilt | 58 N | 46 N | [C8] |
 | Brushing at 35° tilt | 53 N | 39 N | [C9] |
 
-The brush reaction lifts the robot off the frames by about 67 N, so the wheel loads while brushing are lower than when the brush is off the glass. The only time a wheel on a module sees more than 60 N is the second or so when the lead wheels have entered the first module but the brush is still over the dock: about 72 N [C2]. R10 is at risk on that transient; the steady brushing load of 58 N at worst tilt meets it.
+The brush reaction lifts the robot off the frames by about 67 N, so the wheel loads while brushing are lower than when the brush is off the glass. The only time a wheel on a module sees more than 60 N is the second or so when the lead wheels have entered the first module but the brush is still over the dock: about 72 N [C2]. That is within the 75 N that R10 now allows for the row-entry transient (DRN-DDR-002, N2), and the steady brushing load of 58 N at worst tilt meets the 60 N steady limit, so R10 is met on paper, subject to the module maker's frame guidance.
 
 *Table 4. Resistance and traction at 25° tilt, friction 0.4.*
 
 | Case | Resistance | Traction available | Margin | Tag |
 | --- | --- | --- | --- | --- |
 | Still air (rolling 7.9 N, brush 30 N, 2° grade 4.7 N) | 43 N | 78 N | 1.84 | [C3] |
-| 8 m/s wind along the row (29 N on 0.50 m²) | 72 N | 78 N | 1.10 | [C4] |
+| 6 m/s wind along the row, start limit (16 N) | 59 N | 78 N | 1.33 | [C13] |
+| 8 m/s wind along the row, abort limit (29 N on 0.50 m²) | 72 N | 78 N | 1.10 | [C4] |
+| Friction 0.3 at 6 m/s | | | 1.00 | [C13] |
 | Friction 0.3, still air and 8 m/s | | | 1.38 and 0.82 | [C5] |
 | Friction 0.6, still air and 8 m/s | | | 2.76 and 1.64 | [C6] |
 | 35° tilt, still air and 8 m/s | | | 1.72 and 1.03 | [C9] |
 
-In still air the robot has a traction margin of 1.7 to 2.0 on all tilts from 10° to 35°. At the 8 m/s wind limit of R9 the margin falls to about 1.1 at 25° and 1.03 at 35°, and it drops below 1 if the friction is 0.3. A margin of 1.25 holds up to about 6.7 m/s at 25° and 6.0 m/s at 35° [C7]. R9 is at risk until friction is measured; a lower start limit is proposed in `docs/REVIEW.md`. The hook preload of 70 N per truck was chosen as the highest value that keeps the brushing wheel load at 60 N or less at every tilt (Table 3).
+In still air the robot has a traction margin of 1.7 to 2.0 on all tilts from 10° to 35°. At the 8 m/s wind limit of R9 the margin falls to about 1.1 at 25° and 1.03 at 35°, and it drops below 1 if the friction is 0.3. A margin of 1.25 holds up to about 6.7 m/s at 25° and 6.0 m/s at 35° [C7]. DRN-DDR-002 therefore sets a start limit of 6 m/s at the dock anemometer, with 8 m/s kept as the abort limit at which the robot returns to the dock. At the start limit the margin is 1.33 at friction 0.4 but only 1.00 at friction 0.3 [C13], so R9 stays at risk until friction is measured. The hook preload of 70 N per truck was chosen as the highest value that keeps the brushing wheel load at 60 N or less at every tilt (Table 3).
 
 **Frame steps and gaps (R4).** A 70 mm wheel meeting a 5 mm step touches its edge at 31°. With the lead wheel driven, the rest of the truck must add about 9 N at its axle, against about 14 N of spare traction on the other wheels [C10]. A 3 mm step needs about 2 N, and a 25 mm gap between modules lets the wheel dip only 2.3 mm [C11]. Steps of 5 mm are therefore marginal and R4 is at risk. The 18 mm tread sits 4 mm clear of the glass edge on a 25 mm frame flange; on modules whose visible flange is narrower than about 21 mm the tread would run on the glass [C12], so the flange width of target modules must be surveyed.
 
@@ -139,7 +145,7 @@ With power cut, the brush and the reflected inertia of its gearmotor coast to re
 
 ## I. Cost and payback (R13, R14)
 
-The 16 BOM lines total $500.00 against the $500 budget, a margin of $0.00 [I1]. R13 is met only exactly, so it is at risk: every price is indicative.
+The 16 BOM lines total $500.00 against the $500 budget, a margin of $0.00 [I1]. R13 is met only exactly, so it is at risk: every price is indicative. DRN-DDR-002 keeps the budget at $500 and revisits it when quotes exist.
 
 *Table 7. Recovered energy and simple payback on the $500 parts cost.*
 
@@ -166,15 +172,15 @@ The robot shades each module for a few seconds in the evening, which costs 1 to 
 | R6 | Rail-free installation | No rails, no drilling; 60 min for two people | Rail-free and clamp-on by design; time cannot be calculated | Not verifiable at TRL 3 |
 | R7 | Cycle time | 100 m row in 20 min or less | 17.4 min [F4] | Met |
 | R8 | Energy autonomy | Three 100 m cycles with no sun; recharge at 3 sun hours | 67 of 102 Wh [F5]; 45 Wh against 23 Wh a day [F6] | Met |
-| R9 | Stay on the row | End stops; hold in 8 m/s; survive 35 m/s parked | Parked and end stop hold with factors over 4 [D1 to D4]; traction margin 1.10 at 8 m/s [C4] | At risk |
-| R10 | Load on the modules | 15 kg or less; 60 N or less per wheel | 13.8 kg [A3]; 58 N brushing at worst tilt [C8]; 72 N for about a second at row entry [C2] | At risk |
+| R9 | Stay on the row | End stops; start below 6 m/s, abort at 8 m/s; survive 35 m/s parked | Parked and end stop hold with factors over 4 [D1 to D4]; traction margin 1.33 at 6 m/s [C13], 1.10 at 8 m/s [C4], friction 0.4; 1.00 at 6 m/s with friction 0.3 | At risk |
+| R10 | Load on the modules | 15 kg or less; 60 N or less per wheel steady, 75 N at row entry | 13.8 kg [A3]; 58 N brushing at worst tilt [C8]; 72 N for about a second at row entry [C2] | Met |
 | R11 | Environment | IP65; 0 to 50 °C ambient; glass to 75 °C | Pack in the sun may exceed its 45 °C charge limit; sunshade added | At risk |
 | R12 | Safe to be near | Stop within 2 s; guards; stops on each truck | 0.13 s brush, 0.06 s robot [H1]; guards by design | Met |
 | R13 | Affordable | $500 or less in parts | $500.00 [I1] | At risk |
 | R14 | Pays for itself | 3 years or less on rows of 60 m or more, mid case | 2.8 years [I4]; 3.5 years with yearly sleeves [I6] | Met |
 | R15 | Serviceable | Sleeve change in 15 min on the row; catalog parts | Catalog parts; time cannot be calculated | Not verifiable at TRL 3 |
 
-Counts: 6 met, 5 at risk, 0 not met, 4 not verifiable at TRL 3.
+Counts: 7 met, 4 at risk, 0 not met, 4 not verifiable at TRL 3 [J0].
 
 ## Checks against the TRL 2 figures
 

@@ -39,7 +39,7 @@ A = {
     "v_travel": 0.20,                        # m/s
     # wind
     "rho_air": 1.2, "cd_side": 1.5, "cl_plan": 1.0, "cn_panel": 1.2,
-    "v_op": 8.0, "v_park": 35.0,
+    "v_op": 8.0, "v_start": 6.0, "v_park": 35.0,   # v_op: abort limit; v_start: start limit (DRN-DDR-002)
     # electrical
     "eta_brush": 0.60, "eta_drive": 0.50, "p_elec": 3.0, "p_standby": 0.15,
     "pack_Wh": 128.0, "usable": 0.80, "eta_charge": 0.96,
@@ -225,6 +225,11 @@ L35 = loads(35.0); R35 = resistance(L35)[0]
 v_lim35 = sqrt(max(0.0, (A["mu_wheel"] * L35["N"] / 1.25 - R35)) / (0.5 * A["rho_air"] * A["cd_side"] * A_side))
 say("C7", f"wind along the row for a traction margin of 1.25 at mu 0.4: {v_lim:.1f} m/s at 25 deg tilt, {v_lim35:.1f} m/s at 35 deg",
     v_lim=v_lim, v_lim35=v_lim35)
+F_wind_start = 0.5 * A["rho_air"] * A["v_start"] ** 2 * A["cd_side"] * A_side
+Rs, _, _ = resistance(L0, F_wind_start)
+say("C13", f"start limit {A['v_start']:.0f} m/s along the row (DRN-DDR-002): {F_wind_start:.0f} N; total {Rs:.0f} N; margin {T0/Rs:.2f} at mu 0.4, "
+    f"{0.30*L0['N']/Rs:.2f} at mu 0.3; abort at {A['v_op']:.0f} m/s keeps {T0/Rw:.2f} at mu 0.4, {0.30*L0['N']/Rw:.2f} at mu 0.3",
+    margin=T0 / Rs, margin03=0.30 * L0["N"] / Rs, Fs=F_wind_start)
 for tag, tl in (("C8", 10.0), ("C9", 35.0)):
     Lt = loads(tl); Rt, _, _ = resistance(Lt, F_wind_op)
     say(tag, f"tilt {tl:.0f} deg: per wheel {Lt['N_lo']/2:.0f} / {Lt['N_hi']/2:.0f} N, down-slope {Lt['Fs']:.0f} N, "
@@ -404,10 +409,13 @@ status = [
     ("R6", "Rail-free; installed in 60 min", "rail-free and clamp-on by design; time not calculable", "Not verifiable at TRL 3"),
     ("R7", "100 m row in 20 min or less", f"{rows[n100][1]/60:.1f} min", "Met"),
     ("R8", "3 cycles on 100 m with no sun; recharge at 3 sun hours", f"{need3:.0f} of {usable:.0f} Wh; {harvest3:.0f} vs {day_need:.0f} Wh/day", "Met"),
-    ("R9", "End stops; hooks in operating wind; 8 m/s; 35 m/s parked",
-     f"traction margin {T0/Rw:.2f} at 8 m/s (mu 0.4); parked holds", "At risk"),
-    ("R10", "15 kg or less; 60 N or less per wheel", f"{M:.1f} kg; {wl_max:.0f} N at 25 deg, {wl_max_t:.0f} N worst tilt; "
-     f"{wl_entry:.0f} N transient at row entry", ("At risk" if wl_entry > 60 else "Met") if M <= 15 and wl_max_t <= 60 else "Not met"),
+    ("R9", "End stops; hooks in wind; start below 6 m/s, abort at 8 m/s; 35 m/s parked",
+     f"traction margin {out['C13']['margin']:.2f} at the 6 m/s start limit, {T0/Rw:.2f} at the 8 m/s abort (mu 0.4); "
+     f"{out['C13']['margin03']:.2f} and {0.30*L0['N']/Rw:.2f} at mu 0.3; parked holds",
+     "At risk" if out["C13"]["margin03"] < 1.25 else "Met"),
+    ("R10", "15 kg or less; 60 N or less per wheel steady; 75 N or less for the row-entry transient",
+     f"{M:.1f} kg; {wl_max:.0f} N at 25 deg, {wl_max_t:.0f} N worst tilt; {wl_entry:.0f} N transient at row entry",
+     "Met" if M <= 15 and wl_max_t <= 60 and wl_entry <= 75 else ("At risk" if M <= 15 and wl_max_t <= 60 else "Not met")),
     ("R11", "IP65; 0 to 50 C; glass to 75 C", "pack charge limit 45 C in the sun", "At risk"),
     ("R12", "Stops within 2 s", f"brush {t_brush:.2f} s, robot {t_robot:.2f} s", "Met"),
     ("R13", "Parts $500 or less", f"${cost:.2f}", "At risk" if budget - cost < 0.05 * budget and cost <= budget else ("Met" if cost <= budget else "Not met")),

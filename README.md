@@ -10,6 +10,46 @@ Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel
 
 [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement DRN-DWG-001 (PDF)](cad/drawings/DRN-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
+## Concept rationale
+
+Soiling is a daily, gradual loss, so the answer is a small cleaning every day rather than a large one every month. Utility plants already do this with water-free robots bought as a service, but those machines are sized, priced and sold for rows hundreds of meters long. DustRunner scales the same idea down to one row of a small array: a full-width brush that rides on the module frames, so it needs no rails, never loads the glass and cannot fall between modules, and a dock that recharges it from a 20 W panel so it needs no wiring to the array.
+
+The design is open and garage-buildable because the owners who need it most, farms with solar pumps, mini-grids and schools in dry regions, are far from robot vendors and service contracts. Aluminum tube, hobby gearmotors, a LiFePO4 pack and a microfiber sleeve can be bought, cut and repaired locally, and an open design can be adapted to other module lengths and table formats.
+
+## Burning platform
+
+Soiling cost at least 3 to 4 % of the world's solar electricity production in 2018, worth about 3 to 5 billion euros of lost revenue, with 4 to 7 % projected for 2023 as capacity grows fastest in dusty, sunny regions ([Ilse et al., Joule, 2019](https://www.cell.com/joule/fulltext/S2542-4351(19)30422-2)). The loss is steep where the sun is strongest: a 2026 study for Arar, Saudi Arabia, used monthly soiling losses of 3 to 5 % in winter rising to 11 to 18 % in summer ([Alharbi, Energies, 2026](https://www.mdpi.com/1996-1073/19/18/4373)).
+
+Washing is the usual fix, and it spends water in the places that have least of it. Because each manual wash costs labor, small owners stretch the interval to 60 days or more at low tariffs (Alharbi, 2026), and the array runs dirty for most of that time. A cheap daily dry pass changes that trade-off.
+
+## Where it could be used
+
+### By industry
+
+| Industry | Use |
+| --- | --- |
+| Agriculture | Solar irrigation pumping arrays on farms, cleaned daily without trucking in water |
+| Rural electrification | Mini-grid and community solar arrays at remote sites visited weekly or less |
+| Commercial and light industrial | Ground-mounted arrays of 10 to 200 kW at warehouses, factories and depots |
+| Education and health | School and clinic solar systems where no one is paid to clean panels |
+| Water and telecoms utilities | Small arrays powering pumping stations, treatment plants and remote masts |
+| Research and training | University test arrays and technical colleges comparing cleaning regimes |
+
+### By country or region
+
+| Country or region | Why it matters there |
+| --- | --- |
+| Saudi Arabia and the Gulf | High dust loads and scarce fresh water; monthly soiling losses of 11 to 18 % in summer have been used for Arar ([Alharbi, 2026](https://www.mdpi.com/1996-1073/19/18/4373)) |
+| Sahel (for example Niger, Mali, Chad) | Harmattan dust and off-grid solar mini-grids and pumps far from service providers |
+| Northwest India (Rajasthan, Gujarat) | Thar desert dust and fast growth of solar pumps and small plants on farms |
+| Chile (Atacama) | Very high irradiation and very little rain, so dust is rarely washed off naturally |
+| US Southwest (Arizona, Nevada, California) | High-income market with dusty, dry sites and water restrictions on washing |
+| Australia (inland) | Remote farms and stations on dry, dusty land with long distances to any service |
+
+## What sparked the idea
+
+The idea traces back to NASA's InSight lander on Mars, whose mission ended in December 2022 after dust gradually covered its solar panels and its batteries ran out of energy. With no cleaning mechanism on board, the team improvised: on windy days they sprinkled soil from the arm's scoop onto the panels so the falling grains would sweep some dust away and win back a little power ([NASA, "NASA Retires InSight Mars Lander Mission After Years of Science", 2022](https://www.nasa.gov/missions/insight/nasa-retires-insight-mars-lander-mission-after-years-of-science/)). The lesson carries back to Earth's deserts: a solar array without water depends on some dry, regular way of moving dust off the glass, and a small array needs one that costs no more than the energy it saves.
+
 ## Problem
 
 Soiling cuts output of PV arrays in dusty regions by up to 15 to 25% a month in the dusty season, and water for washing is scarce.
@@ -18,7 +58,7 @@ Soiling cuts output of PV arrays in dusty regions by up to 15 to 25% a month in 
 
 Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
 
-The robot spans one table from its lower to its upper module edge. End trucks ride on the module frames and hook under the frame lips, so no rails are needed along the row. A 2.2 m microfiber brush sweeps the glass dry once a day in the evening, and the robot parks off the glass in a clamp-on dock where a 20 W panel recharges its 12.8 V LiFePO4 pack and an anemometer checks the wind before each run. The TRL 3 calculations (DRN-CAL-001) give, for a 40 m, 20 kWp row, about 7.4 minutes and 7.6 Wh per cycle, a 13.8 kg robot and $500 in parts for robot, dock and anemometer, with a payback of about 2.8 years on rows of 60 m. Six of fifteen requirements are met on paper and five are at risk, chiefly traction in wind and a budget with no margin. These are calculations, not test results.
+The robot spans one table from its lower to its upper module edge. End trucks ride on the module frames and hook under the frame lips, so no rails are needed along the row. A 2.2 m microfiber brush sweeps the glass dry once a day in the evening, and the robot parks off the glass in a clamp-on dock where a 20 W panel recharges its 12.8 V LiFePO4 pack and an anemometer checks the wind before each run. The TRL 3 calculations (DRN-CAL-001) give, for a 40 m, 20 kWp row, about 7.4 minutes and 7.6 Wh per cycle, a 13.8 kg robot and $500 in parts for robot, dock and anemometer, with a payback of about 2.8 years on rows of 60 m. Seven of fifteen requirements are met on paper and four are at risk, chiefly traction in wind and a budget with no margin. Runs start only when the dock anemometer reads below 6 m/s and abort at 8 m/s (DRN-DDR-002). These are calculations, not test results.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -56,4 +96,4 @@ Controlled documents follow the portfolio [documentation standard](.kit/STANDARD
 - **Hardware** (CAD, drawings, BOM, electronics): [CERN-OHL-S v2](LICENSE)
 - **Software** (firmware, scripts, notebooks): [MIT](LICENSE-SOFTWARE)
 
-Part of the open hardware portfolio at [amishchadha.com](https://amishchadha.com).
+A project of the [Design Molecule](https://designmolecule.com) lab.
