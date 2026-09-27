@@ -181,3 +181,30 @@ TRL 4 remains on hold by Amish's instruction. The parts of N1 and N3 that need T
 - Not changed (outside this session's scope): DRN-PRB-001 still cites PV Tech (trade press) alone for the QEERI figures and Polywater (vendor) alone for water per module; both should get primary sources at the next revision.
 - The "Qatar 11 to 18 %" wording in item 10 of the TRL 2 session above predates this correction.
 - No budget change.
+
+## Session 2026-09-26: product appearance model and photoreal renders
+
+Amish chose this repo for the first batch of product renders on 2026-09-26.
+
+### What was done
+
+- `cad/src/product_model.py` (new): a product appearance model for photoreal renders. `product_parts()` returns every part with its colour, material, BOM line, group and exploded-view offset; `TITLE` and `RENDER_VIEWS` define three views: `hero` (robot partway along a two-module row with its dock and anemometer in front), `exploded` (robot, dock and end stops) and `detail` (the lower end truck clamped on a section of the module frame). It adds:
+  - Robot: anodized beam with fillets, an accent stripe and a name plate; white powder-coated hood with rolled edges, hangers and an accent band; microfiber sleeve (fabric) on its core ends, stub shafts and bearing flanges; sunshade frame on four posts; strapped LiFePO4 pack with a label; IP65 controller box with a lid parting line, a clear side window showing the board, a shielded module and a lit status light, a main switch and cable glands.
+  - End trucks: graphite plates with corner fillets, lightening holes, bolts and a badge; polyurethane tyres on metal hubs; wheel belt guards; drive gearmotors split into gearbox, can and encoder cap; guide rollers on clevis tabs; hook arms with rollers and preload springs; IR sensors with lenses; copper charge contacts; a red emergency stop on a yellow base on each truck (the two stop buttons of BOM item 15). The lower truck also carries the brush gearmotor housing (with cooling slots) and the brush belt cover.
+  - Dock: C-section rails, cross members and posts, painted clamps with bolts, legs with feet, a framed 20 W panel with cells, a charger box with a lit charge light, spring contacts with the latch pin on a contact post, and a three-cup anemometer on its mast. End stops get rubber buffers and clamp bolts.
+  - Context (not in the BOM): two reference modules (frames, backsheet, cells), a dust film ahead of the robot (illustrative), purlins, rafters, posts with concrete footings and a compact gravel ground patch.
+- `README.md`: the hero image now points to `media/render-hero.png`, and the links line starts with the exploded render. The render files will be produced by the orchestrator.
+- Self-check previews (matplotlib, clear parts left out) were reviewed for all three views; they are scratch files, not repo media.
+
+### Differences from model.py (each Proposed, awaiting Amish)
+
+1. Coordinates. model.py builds everything in local table coordinates (glass plane). The product model builds each part in those coordinates and then places it with the same tilt transform as `cad/src/concept_media.py` (Z up, ground at Z = 0), because the renderer needs a ground plane. Recommendation: accept; no dimension changes.
+2. Scene layout. The robot is shown at u = 560 mm, partway along the first of two modules, not parked in the dock as in `assembly()`. Recommendation: accept, since it shows the brush on the glass and the dock together.
+3. Exploded view. The dock is drawn 300 mm nearer the robot along the row and the end stops 900 mm nearer, so the exploded view stays compact; the dock legs are left out of it. Recommendation: accept (render layout only).
+4. Groups. The lower end truck, the brush drive and a short section of the module frame are in the `internal` group so the `detail` view can frame the edge clamp; the upper truck, its mirror image, is in `shell`. Recommendation: accept.
+5. Small appearance additions not in model.py: a bracket and foot that tie the dock contact block to the rail (model.py shows the block alone), the sunshade posts and cross bars that seat it on the beam, bearing flanges on the truck plates, hood hangers, pack straps, and rubber buffers on the end stops. These imply small hardware covered by BOM items 3, 11, 13, 14 and 15; no BOM line or cost changes. Recommendation: accept as appearance only, and confirm the dock contact bracket at the next design revision.
+6. Materials and colours. Wheel tyres are shown in the kit accent (#0F766E) and the hood and sunshade in white powder coat; model.py sets no finishes. Recommendation: accept, or choose a different tyre colour.
+
+### Status
+
+This is an appearance model only: no tolerances, no fabrication detail, no change to PARAMS, the BOM, the calculations or the drawing. `trl` stays 3 and TRL 4 remains on hold.
