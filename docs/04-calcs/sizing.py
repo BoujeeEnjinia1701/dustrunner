@@ -17,7 +17,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "cad" / "src"))
-from model import PARAMS as P, derived, robot_parts, bx  # noqa: E402
+from model import PARAMS as P, derived, robot_parts, build_components, bx  # noqa: E402
 
 D = derived(P)
 g = 9.81
@@ -58,8 +58,18 @@ A = {
 # bought-in part masses, kg (typical catalog values, to confirm by weighing)
 BOUGHT = {"brush_motor": 0.80, "drive_motors": 0.50, "rollers": 0.35, "battery": 1.30,
           "controller": 0.45, "sensors": 0.12}
-WIRING = 0.50            # item 15, wiring, fuse, switches, stop buttons, fasteners (kg)
-TRUCK_EXTRA = 0.30       # per truck: belts, pulleys, hook arm, spring, belt cover, bearings (kg)
+WIRING = 0.50            # item 15, wiring, fuse, main switch, cable ties (kg)
+TRUCK_EXTRA = 0.30       # per truck: four 10 mm pressed-steel flange bearings, axles, pulleys, belt, coupling (kg)
+BRUSH_BEARINGS = 0.40    # two 20 mm pressed-steel flange bearings (kg)
+FITTINGS_BOUGHT = 0.34   # two stop buttons 0.16, latch solenoid 0.08, pack straps 0.05, cleat and hood screws 0.05 (kg)
+# made fittings added for construction (DRN-DDR-003), aluminium, mass from the model solids
+CMP = build_components(P)
+FIT_AL = {"trucks": ["housing_lo", "housing_hi", "contact_bracket"],
+          "rollers": ["clevises_lo", "clevises_hi", "slider_lo", "slider_hi"],
+          "sensors": ["sensor_brackets_lo", "sensor_brackets_hi"],
+          "brush": ["plugs"],
+          "fittings": ["cleats_lo", "cleats_hi", "shade_posts", "hood_spacers"]}
+fit_al = {g: sum(CMP[k].shape.volume for k in ks) * 1e-9 * 2700.0 for g, ks in FIT_AL.items()}
 
 out = {}
 
@@ -90,12 +100,15 @@ sleeve_vol = pi / 4 * (P["brush_d"] ** 2 - P["core_d"] ** 2) * D["brush_len"] * 
 m_core = core_area * 1e-6 * (D["brush_len"] + 20) / 1000 * A["al_rho"]
 m_sleeve = sleeve_vol * A["pile_rho"]
 m_shafts = 2 * pi / 4 * (P["shaft_d"] / 1000) ** 2 * 0.075 * A["steel_rho"]
-m["brush"] = m_core + m_sleeve + m_shafts
+m["brush"] = m_core + m_sleeve + m_shafts + fit_al["brush"] + BRUSH_BEARINGS
 m["hood"] = rp["hood"].volume * 1e-9 * A["al_rho"]
 plate_vol = 2 * P["plate_t"] * 2 * P["plate_half_u"] * (P["plate_w"][1] - P["plate_w"][0]) * 1e-9
 wheel_vol = 4 * pi * (P["wheel_d"] / 2000) ** 2 * P["wheel_w"] / 1000
-m["trucks"] = plate_vol * A["al_rho"] + wheel_vol * A["pu_rho"] + 2 * TRUCK_EXTRA
+m["trucks"] = plate_vol * A["al_rho"] + wheel_vol * A["pu_rho"] + 2 * TRUCK_EXTRA + fit_al["trucks"]
 m.update(BOUGHT)
+m["rollers"] += fit_al["rollers"]
+m["sensors"] += fit_al["sensors"]
+m["fittings"] = fit_al["fittings"] + FITTINGS_BOUGHT
 m["wiring"] = WIRING
 M = sum(m.values())
 # center of mass up the slope (v) and normal to the glass (w) from the part solids
@@ -113,6 +126,12 @@ say("A1", f"beam {m['beam']:.2f} kg, brush {m['brush']:.2f} kg (core {m_core:.2f
 say("A2", "bought parts " + ", ".join(f"{k} {v:.2f}" for k, v in BOUGHT.items()) + f", wiring {WIRING:.2f} kg")
 say("A3", f"robot mass {M:.1f} kg (R10 limit 15 kg); CG {cg_v:.0f} mm up the slope of {P['mod_l']:.0f}, {cg_w:.0f} mm above the glass",
     M=M, cg_v=cg_v, cg_w=cg_w)
+plate_add = (plate_vol - 2 * P["plate_t"] * 2 * P["plate_half_u"] * 272.0 * 1e-9) * A["al_rho"]   # concept plates were 272 mm tall
+add = sum(fit_al.values()) + BRUSH_BEARINGS + FITTINGS_BOUGHT + plate_add
+say("A4", f"added for construction (DRN-DDR-003): drive housings, clevises, hook sliders, brackets, cleats, posts and core plugs "
+    f"{sum(fit_al.values()):.2f} kg; brush flange bearings {BRUSH_BEARINGS:.2f} kg; stop buttons, solenoid, straps and screws "
+    f"{FITTINGS_BOUGHT:.2f} kg; taller truck plates {plate_add:.2f} kg; "
+    f"total {add:.2f} kg", add=add)
 
 # ------------------------------------------------------------------ B. brush contact, drag and deflection
 print("B. Brush contact, drag and deflection (R3, R8)")
@@ -199,6 +218,16 @@ def resistance(Ld, wind=0.0, extra=0.0):
     grade = M * g * sin(radians(A["grade_deg"]))
     return roll + Ft + grade + wind + extra, roll, grade
 
+
+# hook preload rule (DRN-CAL-001 Table 3): the highest preload, in 5 N steps, that keeps the steady brushing
+# wheel load at 60 N or less at every tilt from 10 to 35 degrees
+def _worst_steady(pre):
+    return max(max(loads(t, preload=pre)["N_lo"], loads(t, preload=pre)["N_hi"]) / 2 for t in range(10, 36))
+
+
+A["preload"] = float(max(pp for pp in range(20, 101, 5) if _worst_steady(pp) <= 60.0))
+say("C0", f"hook preload by the 60 N rule: {A['preload']:.0f} N per truck (worst steady wheel load {_worst_steady(A['preload']):.1f} N; "
+    f"{_worst_steady(A['preload'] + 5):.1f} N at {A['preload'] + 5:.0f} N)", pre=A["preload"])
 
 A_side = D["brush_len"] / 1000 * (D["beam_w"][1] / 1000) + 0.03     # beam, hood and brush silhouette plus enclosures and motors
 q_op = 0.5 * A["rho_air"] * A["v_op"] ** 2
@@ -342,8 +371,8 @@ say("F7", f"flow, 40 m row: dock {e_in:.2f} Wh, pack out {E40:.2f} Wh, electroni
 # ------------------------------------------------------------------ G. coverage
 print("G. Coverage (R5)")
 across = D["brush_len"] / D["glass_across"]
-u_stop_face = -P["stop_l"]                    # stop face measured from the end of the last module
-brush_reach = u_stop_face - P["plate_half_u"] + P["brush_d"] / 2
+u_stop_face = -P["stop_l"] - P["buffer_t"]    # buffer face measured from the end of the last module
+brush_reach = u_stop_face - (P["wheel_u"] + P["wheel_d"] / 2) + P["brush_d"] / 2   # the lead wheels meet the buffers
 unbrushed = -P["lip"] - brush_reach
 glass_w = P["mod_w"] - 2 * P["lip"]
 cov40 = across * (1 - unbrushed / (35 * glass_w))
@@ -390,6 +419,9 @@ say("I6", f"60 m row, mid case, with a ${A['sleeve_cost']:.0f} sleeve set every 
 res_break = A["rate_mid"] * A["wash_days"] / 2 - cost / 3 / A["price"] / (modules_for(60.0) * A["kwp_per_module"] * A["yield"] * 365)
 say("I7", f"60 m row meets 3 years while the daily-cleaning residual loss stays below {res_break*100:.1f} % (assumed {A['residual']*100:.1f} %)",
     res=res_break)
+n3 = next(n for n in range(10, 400) if payback(n, A["rate_mid"])[5] <= 3.0)
+say("I9", f"shortest row with a mid-case payback of 3 years or less at ${cost:.0f}: {n3} modules, {row_len(n3):.1f} m",
+    n=n3, length=row_len(n3))
 water = (35 * 3.5, 35 * 10.0)
 say("I8", f"water avoided per monthly wash of the 40 m row {water[0]:.0f} to {water[1]:.0f} L; {12*water[0]/1000:.1f} to {12*water[1]/1000:.1f} m3/yr")
 

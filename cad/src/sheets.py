@@ -1,4 +1,4 @@
-"""DustRunner general arrangement sheet DRN-DWG-001, Rev P1 (TRL 3).
+"""DustRunner general arrangement sheet DRN-DWG-001, Rev P3 (TRL 3, constructable design of DRN-DDR-003).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/DRN-DWG-001.svg, .pdf and .png from the parametric model in
@@ -18,6 +18,7 @@ from drawing import Sheet, _viewbox, _t, M, TB_Y, INK, MUTED  # noqa: E402
 from model import PARAMS as P, derived, robot, frame_edge, mirror_v  # noqa: E402
 
 DATE = "2026-09-25"
+DATE3 = "2026-09-30"
 STUB = 150.0      # half length of the reference frame stubs along the row
 
 
@@ -98,10 +99,11 @@ def main():
     sec = Compound(children=[c & slab for c in (to_sheet * robot(P), to_sheet * stubs)])
     sviews = safe_project_views(sec, work / "sec", hidden_right=False)
     sbb = sec.bounding_box()
-    s = Sheet(project="DustRunner", title="General arrangement, robot on the module frames", dwg_no="DRN-DWG-001", rev="P2",
-              author="Amish Chadha", date=DATE, scale=None, theme="technical",
+    s = Sheet(project="DustRunner", title="General arrangement, robot on the module frames", dwg_no="DRN-DWG-001", rev="P3",
+              author="Amish Chadha", date=DATE3, scale=None, theme="technical",
               material="6063 aluminum beam, plates and hood; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"), ("P2", "Layout and labels tidied", "2026-09-30", "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"), ("P2", "Layout and labels tidied", "2026-09-30", "AC"),
+                         ("P3", "Constructable design (DRN-DDR-003): bearings, housings, clevises, sliders, cleats", DATE3, "AC")])
     s.add_ortho(views, names=("front", "top"))
     k = s.scale
     c = ortho_cells(s, views)
@@ -151,7 +153,7 @@ def main():
             ((-P["hood_r"] * 0.7, D["brush_w"] + P["hood_r"] * 0.7), f"Hood, {P['hood_t']} sheet"),
             ((0.0, D["brush_w"] + 30), f"Brush {P['brush_d']:.0f} dia, {P['interference']:.1f} interference"),
             ((-wu, D["wheel_c"]), f"Wheel {P['wheel_d']:.0f} x {P['wheel_w']:.0f} on frame top flange"),
-            ((0.0, D["hook_c"]), f"Hook roller {P['hook_d']:.0f} dia, 70 N preload"),
+            ((0.0, D["hook_c"]), f"Hook roller {P['hook_d']:.0f} dia, 60 N preload"),
             ((-(P["plate_half_u"] - 10), P["frame_proud"] - P["frame_d"] / 2), "Module frame (reference)")]
     lx = sx + vw + 8
     for i, ((uy, wz), text) in enumerate(tags):
@@ -166,11 +168,11 @@ def main():
         f"Reference module {Lm:,.0f} long (1P portrait); frame {P['frame_d']:.0f} deep, top flange {P['lip']:.0f} wide (assumed)",
         f"Wheels {P['wheel_d']:.0f} x {P['wheel_w']:.0f} PU on the frame top flange, {P['wheel_v'][0]:.0f} to {P['wheel_v'][1]:.0f} from its outer face",
         f"Guide rollers {P['guide_d']:.0f} dia on the frame outer face; hook roller {P['hook_d']:.0f} dia under the bottom flange",
-        "Hook preload 70 N per truck (DRN-CAL-001 C1); both wheels driven on each truck",
+        "Hook preload 60 N per truck on a sprung slider (DRN-CAL-001 C0); both wheels driven",
         f"Brush axis {D['brush_w']:.1f} above the glass: {P['interference']:.1f} nominal interference; core {P['core_d']:.0f} x {P['core_t']:.0f}",
         f"Beam {P['beam_b']:.0f} x {P['beam_h']:.0f} x {P['beam_t']:.0f}, {D['beam_len']:,.0f} long, {D['beam_w'][0]:.0f} to {D['beam_w'][1]:.0f} above the glass",
         f"Hood {P['hood_t']} sheet, R{P['hood_r']:.0f}; nothing but the brush within 10 of the glass",
-        "Robot about 13.8 kg; about 55 N per wheel brushing (DRN-CAL-001 A3, C1)",
+        "Robot about 15.9 kg; about 56 N per wheel brushing (DRN-CAL-001 A3, C1)",
         "Third-angle; sheet X up the slope, Y along the row, Z normal to the glass",
     ], x=276, y=150, width=146)
     out = s.save(ROOT / "cad" / "drawings" / "DRN-DWG-001")

@@ -214,3 +214,58 @@ This is an appearance model only: no tolerances, no fabrication detail, no chang
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-09-30: prototype build plan and design for construction (kit 1.7.0)
+
+Kit 1.7.0 installed (`.kit/`, `.claude/commands/`, `CLAUDE.md`). Amish's instructions of 2026-09-30: write the illustrated build plan in the approved format, "fix the design assumptions to match and be physically feasible as you draw the illustrations", and keep outstanding decisions out of the build plan in a separate register.
+
+### What was done
+
+- `cad/src/model.py` rebuilt to a constructable level of detail: `build_components()` returns every robot, dock and end-stop part; `python cad/src/model.py --check` runs 123 constructability checks (contacts, clearances, robot on the module, parked in the dock and at the end stop, hook roller path); all 123 pass. STEP and STL re-exported.
+- `docs/decisions/0003-design-for-construction.md` (DRN-DDR-003 v0.1, Draft): every change, its reason, the knock-on changes and four items proposed, awaiting Amish.
+- `docs/05-build-plan.md` (DRN-BLD-001 v0.1): 19 made components, bought parts, wiring, 15 assembly steps, first checks, safety stops, tools.
+- `docs/06-design-decisions.md` (DRN-DEC-001 v0.1): 8 open decisions (7 after the 2026-10-01 budget wording pass), 8 items to confirm when parts are bought, decisions made.
+- `cad/src/build_plan_media.py`: overview pictures (robot and dock), making sketches `cad/drawings/DRN-DWG-101` to `119`, 11 joint close-ups, 15 step pictures and a wiring diagram in `docs/05-build-plan/`.
+- `docs/04-calcs/sizing.py` and DRN-CAL-001 v0.3 re-run for the constructable design (new [A4], [C0], [I9]); DRN-REQ-001 v0.5 and DRN-PRC-001 v0.5 updated; `bom/bom.csv` and `bom/bom-notes.md` repriced; `cad/src/sheets.py` and DRN-DWG-001 Rev P3; concept media regenerated (`cad/src/concept_media.py`); `project.yaml` (`design_state: constructable`, new evidence); README links line, "Building the prototype" and a short "Safety" section.
+
+### Design changes made for construction (DRN-DDR-003)
+
+1. Truck plate gap 28 mm (was 22): each guide roller now turns on an M8 bolt in a folded clevis, 6 mm off the plate (it used to fill the gap and rub the plate).
+2. Hook roller on an 8 mm axle cantilevered from a 10 mm slider that runs on shoulder bolts and is pushed up by a spring on a seat bracket (the concept had a rigid arm, no axle, no spring); plates 24 mm taller (296 mm).
+3. Each wheel axle in two flange bearings, one each side of the plate (stub axles could not carry the outboard belt).
+4. Folded drive housings on the outer faces guard the belts and carry the gearmotors (which floated); shaft couplings; wheel and brush belts in separate layers; lower brush shaft stepped to 15 mm outboard of the plate.
+5. Turned core end plugs, stub shafts in the plugs, and a 20 mm flange bearing on each plate (shafts butted the core and passed through the plates with no bearing).
+6. Beam bolted to each plate by two angle cleats (it butted, unfixed).
+7. Hood hung on five 3 mm spacers; sunshade on four posts; pack strapped (all floated).
+8. IR sensors and the robot contact block on folded brackets on the plate face (they butted the plate edge).
+9. Dock latch made real: a 12 V spring-return solenoid on the robot drops its 6 mm pin through a latch tab on the dock.
+10. Dock contact block on a post bolted to the rail-start cross member (it floated 89 mm above the frame).
+11. Dock cross members moved 6 mm below the rails and 30 mm inside them, rails held by L brackets inside the channel with spacers and shims; the two posts that blocked the hook roller's path removed.
+12. Frame clamps rebuilt as bar, jaw, spacer and one M8 bolt round the first module's bottom flange (they touched nothing).
+13. Dock legs vertical, bolted beside the cross members, on foot plates; three ties added; vertical anemometer mast in U-bolt clamps (it leaned 25°).
+14. End stops rebuilt as three screwed pieces with an M8 clamp screw, 40 mm tall so the IR sensors pass over and the wheels meet the buffer (a sensor used to hit the stop first).
+15. Reference module long sides modelled as C sections (context only).
+
+### Key results (DRN-CAL-001 v0.3)
+
+- Robot 15.9 kg (was 13.8 kg; about 2.1 kg of construction parts). Hook preload 60 N per truck by the existing 60 N wheel-load rule (was 70 N); wheel loads 56 N brushing, 59 N worst tilt, 73 N at row entry; traction margin 1.30 at the 6 m/s start limit (0.98 at friction 0.3).
+- Parts $573.00 (was $500.00), USD 73 over the $500 value-engineering target. Payback 3.2 years on a 60 m row; 3 years from 63.5 m.
+- Requirements: 5 met, 3 at risk (R4, R9, R11), **3 short of target: R10 (mass; wheel loads met), R13 (over the value-engineering target by USD 73: $573 against $500), R14 (3.2 years on 60 m)**, 4 not verifiable at TRL 3.
+
+### Proposed, awaiting Amish
+
+See DRN-DEC-001, open items 1 to 7: accept DRN-DDR-003 (recommend accept); restate R10's mass limit to 16.5 kg and weigh at TRL 4; keep R14 at risk until quotes; robot-side latch solenoid; pilot partner (no recommendation); render deviations of 2026-09-26; update the appearance model and renders. The budget is no longer an open decision: `budget_usd` stays $500 as a value-engineering target, and the savings worth trying are in the register's Value engineering section (2026-10-01).
+
+### Stale media
+
+The design changed visibly, so `media/render-hero.png`, `media/render-exploded.png`, `media/render-detail.png`, `media/card.png`, `media/social-preview.png` and `cad/src/product_model.py` are stale (concept trucks, hook arms, dock legs, leaning mast). They are made on Amish's Mac and were not regenerated.
+
+### Safety concerns
+
+- The latch now depends on a solenoid on the robot; it fails latched (spring out), and the parked-wind check [D2] is unchanged.
+- The drive housings fully enclose the wheel and brush belts (pinch points, R12); the stop buttons sit in the truck plates.
+- The dock must be clamped to the module frame without drilling and kept clear of array cables and junction boxes (build plan S5).
+
+### Recommended next step
+
+Amish reviews DRN-DDR-003 and the register, and decides the budget, R10 and R14 items. TRL 4 stays on hold; the build plan is paper only.

@@ -2,13 +2,13 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1386351560.svg)](https://zenodo.org/badge/latestdoi/1386351560) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/dustrunner/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/dustrunner/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/dustrunner/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/dustrunner)
 
-**Area:** CleanTech · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** about $500 USD · **Difficulty:** 4 of 5
+**Area:** CleanTech · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** about $500 USD (estimated parts cost $573) · **Difficulty:** 4 of 5
 
 Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
 
 ![DustRunner: rail-free cleaning robot for solar panel rows, product render](media/render-hero.png)
 
-[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement DRN-DWG-001 (PDF)](cad/drawings/DRN-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
+[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement DRN-DWG-001 (PDF)](cad/drawings/DRN-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
@@ -57,7 +57,7 @@ Soiling cuts output of PV arrays in dusty regions by up to 15 to 25% a month in 
 
 Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
 
-The robot spans one table from its lower to its upper module edge. End trucks ride on the module frames and hook under the frame lips, so no rails are needed along the row. A 2.2 m microfiber brush sweeps the glass dry once a day in the evening, and the robot parks off the glass in a clamp-on dock where a 20 W panel recharges its 12.8 V LiFePO4 pack and an anemometer checks the wind before each run. The TRL 3 calculations (DRN-CAL-001) give, for a 40 m, 20 kWp row, about 7.4 minutes and 7.6 Wh per cycle, a 13.8 kg robot and $500 in parts for robot, dock and anemometer, with a payback of about 2.8 years on rows of 60 m. Seven of fifteen requirements are met on paper and four are at risk, chiefly traction in wind and a budget with no margin. Runs start only when the dock anemometer reads below 6 m/s and abort at 8 m/s (DRN-DDR-002). These are calculations, not test results.
+The robot spans one table from its lower to its upper module edge. End trucks ride on the module frames and hook under the frame lips, so no rails are needed along the row. A 2.2 m microfiber brush sweeps the glass dry once a day in the evening, and the robot parks off the glass in a clamp-on dock where a 20 W panel recharges its 12.8 V LiFePO4 pack and an anemometer checks the wind before each run. The TRL 3 calculations (DRN-CAL-001), run on the constructable design, give for a 40 m, 20 kWp row about 7.4 minutes and 7.7 Wh per cycle, a 15.9 kg robot and $573 in parts for robot, dock and anemometer, with a payback of about 3.2 years on rows of 60 m and 3 years from about 64 m. Five of fifteen requirements are met on paper, three are at risk (chiefly traction in wind) and three fall short of their targets: the bearings, housings and fittings that make the design buildable put the robot over its 15 kg mass limit, the parts USD 73 over the $500 value-engineering target and the 60 m payback over 3 years. The mass and payback targets are open decisions for Amish; the cost savings worth trying are in the design decisions register. Runs start only when the dock anemometer reads below 6 m/s and abort at 8 m/s (DRN-DDR-002). These are calculations, not test results.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -71,6 +71,16 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 - Clamp-on dock with a 20 W PV panel, charger and anemometer; clamp-on end stops
 
 The priced bill of materials is in [bom/bom.csv](bom/bom.csv); the parametric model is [cad/src/model.py](cad/src/model.py), with STEP files in `cad/step/`.
+
+## Building the prototype
+
+The [prototype build plan](docs/05-build-plan.md) shows, in pictures drawn from the model, how to make each of the 19 workshop-made components and fit them with the bought parts in 15 steps: the robot first, then the dock at the start of the row and the end stops at its far end. Making the design buildable added bearings, drive housings, roller brackets, dock brackets and clamps and a latch solenoid, recorded in [DRN-DDR-003](docs/decisions/0003-design-for-construction.md); they put the robot at about 15.9 kg and the parts at about $573. The work is sawing, drilling, tapping and folding aluminium, a little turning, and wiring bought modules at 12.8 V. Open decisions and the value-engineering notes are in the [design decisions register](docs/06-design-decisions.md).
+
+![DustRunner robot, every component pulled apart and numbered in build order](docs/05-build-plan/overview.png)
+
+## Safety
+
+DustRunner is moving machinery with an unattended rotating brush and a lithium iron phosphate pack, and it works on live PV arrays at several hundred volts DC. The build plan's safety stops (Section 6) and the design precis's safety section apply to every build.
 
 ## Repository layout
 

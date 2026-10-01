@@ -142,6 +142,7 @@ BOM = [
     ("battery", 8, "LiFePO4 pack, 12.8 V 10 Ah", "#C2410C"),
     ("controller", 9, "Controller and motor drivers", "#7C3AED"),
     ("sensors", 10, "IR edge sensors (4)", "#0EA5E9"),
+    ("fittings", 15, "Cleats, spacers, posts, straps and stop buttons", "#374151"),
 ]
 DOCK_BOM = [
     ("dock", 11, "Dock frame, rails and clamps", "#A16207"),
@@ -167,7 +168,7 @@ table_parts = [
 ]
 parts = list(table_parts)
 for key, n, name, col in BOM:
-    parts.append(Part(name, T(robot[key]), col, n))
+    parts.append(Part(name, T(robot[key]), col, None if n == 15 else n))
 for key, n, name, col in DOCK_BOM:
     shape = T(dock[key])
     parts.append(Part(name, shape, col, n))
@@ -175,15 +176,15 @@ for key, n, name, col in DOCK_BOM:
 KEY_FIGURES = [
     "Brush 2.2 m long, 120 mm diameter, about 150 rpm; water-free",
     "Travel 0.2 m/s: 40 m row out and back in about 7.4 min (DRN-CAL-001)",
-    "About 67 W while cleaning; about 7.6 Wh per cycle (DRN-CAL-001)",
-    "Robot about 13.8 kg; about 55 N per wheel on the frames (DRN-CAL-001)",
-    "Robot, dock and anemometer $500 in parts (indicative)",
+    "About 68 W while cleaning; about 7.7 Wh per cycle (DRN-CAL-001)",
+    "Robot about 15.9 kg; about 56 N per wheel on the frames (DRN-CAL-001)",
+    "Robot, dock and anemometer $573 in parts (indicative)",
 ]
 
 FLOW = {"title": "energy per cleaning cycle, 40 m row out and back, Wh (estimates, DRN-CAL-001 F7)", "unit": "Wh",
-        "stages": [("Dock charge in", 7.94), ("Pack output", 7.62), ("Motor input", 7.25), ("Brush and wheels", 4.16)],
+        "stages": [("Dock charge in", 8.02), ("Pack output", 7.70), ("Motor input", 7.33), ("Brush and wheels", 4.20)],
         "losses": [(0, "Charging and pack (4 %)", 0.32), (1, "Controller and sensors", 0.37),
-                   (2, "Motors and gears (43 %)", 3.09)]}
+                   (2, "Motors and gears (43 %)", 3.13)]}
 
 
 def exploded_parts():
@@ -202,6 +203,7 @@ def exploded_parts():
     add("battery", r["battery"], (0, 0, 640))
     add("controller", r["controller"], (0, 150, 600))
     add("brush_motor", r["brush_motor"], (250, -650, -250))
+    out.append(Part(NAMES["fittings"][1], r["fittings"], NAMES["fittings"][2], None, (0, 0, 520)))
     for key, ev in (("trucks", (0, -380, -300)), ("rollers", (0, -380, -620)),
                     ("drive_motors", (350, -520, -460)), ("sensors", (500, -380, -40))):
         add(key, r[key + "_lo"], ev)

@@ -5,12 +5,14 @@ repo: BoujeeEnjinia1701/dustrunner         # GitHub repository, shown on every d
 area: CleanTech
 trl: 3                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
 trl_target: 3
+design_state: constructable   # STANDARDS section 18; made constructable by DRN-DDR-003
 trl_evidence:
   - docs/01-problem.md
   - docs/02-concept.md
   - docs/03-requirements.md
   - docs/decisions/0001-trl2-review-decisions.md
   - docs/decisions/0002-recommendations-accepted.md
+  - docs/decisions/0003-design-for-construction.md
   - docs/04-calcs/01-sizing.md
   - docs/04-calcs/sizing.py
   - cad/src/model.py
@@ -21,6 +23,8 @@ trl_evidence:
   - cad/drawings/DRN-DWG-001.svg
   - cad/drawings/DRN-DWG-001.pdf
   - bom/bom.csv
+  - docs/05-build-plan.md
+  - docs/06-design-decisions.md
 shortlisted: false
 pitch: >-
   Rail-free crawler robot that uses a rotating microfiber brush to dry-clean panel rows, clamps onto panel edges and docks to recharge.
