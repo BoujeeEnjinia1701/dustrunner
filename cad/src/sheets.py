@@ -98,10 +98,10 @@ def main():
     sec = Compound(children=[c & slab for c in (to_sheet * robot(P), to_sheet * stubs)])
     sviews = safe_project_views(sec, work / "sec", hidden_right=False)
     sbb = sec.bounding_box()
-    s = Sheet(project="DustRunner", title="General arrangement, robot on the module frames", dwg_no="DRN-DWG-001", rev="P1",
+    s = Sheet(project="DustRunner", title="General arrangement, robot on the module frames", dwg_no="DRN-DWG-001", rev="P2",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="6063 aluminum beam, plates and hood; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"), ("P2", "Layout and labels tidied", "2026-09-30", "AC")])
     s.add_ortho(views, names=("front", "top"))
     k = s.scale
     c = ortho_cells(s, views)
@@ -112,8 +112,6 @@ def main():
     Xt = lambda mx: x + (mx - bb.min.X) * k
     Yt = lambda my: y + h - (my - bb.min.Y) * k
     ttop = Yt(bb.max.Y)
-    L += [ext(Xt(bb.min.X), ttop - 1, Xt(bb.min.X), ttop - 15), ext(Xt(bb.max.X), ttop - 1, Xt(bb.max.X), ttop - 15)]
-    L += dim_h(Xt(bb.min.X), Xt(bb.max.X), ttop - 14, f"{bb.size.X:,.0f} overall")
     L += [ext(Xt(pv0), ttop - 1, Xt(pv0), ttop - 8), ext(Xt(Lm - pv0), ttop - 1, Xt(Lm - pv0), ttop - 8)]
     L += dim_h(Xt(pv0), Xt(Lm - pv0), ttop - 7, f"{Lm - 2 * pv0:,.0f} over truck plates")
     hu = P["plate_half_u"]
@@ -125,10 +123,10 @@ def main():
     X = lambda mx: x + (mx - bb.min.X) * k
     Z = lambda mz: y + h - (mz - bb.min.Z) * k
     bot = Z(bb.min.Z)
-    L += [ext(X(0), bot + 1, X(0), bot + 17), ext(X(Lm), bot + 1, X(Lm), bot + 17)]
-    L += dim_h(X(0), X(Lm), bot + 16, f"{Lm:,.0f} module length (reference frame stubs)", above=False)
-    L += [ext(X(D["brush_v"][0]), Z(0), X(D["brush_v"][0]), bot + 25), ext(X(D["brush_v"][1]), Z(0), X(D["brush_v"][1]), bot + 25)]
-    L += dim_h(X(D["brush_v"][0]), X(D["brush_v"][1]), bot + 24, f"{D['brush_len']:,.0f} brushed length, {P['brush_d']:.0f} dia", above=False)
+    L += [ext(X(0), bot + 1, X(0), bot + 20), ext(X(Lm), bot + 1, X(Lm), bot + 20)]
+    L += dim_h(X(0), X(Lm), bot + 19, f"{Lm:,.0f} module length (reference frame stubs)", above=False)
+    L += [ext(X(D["brush_v"][0]), Z(0), X(D["brush_v"][0]), bot + 28), ext(X(D["brush_v"][1]), Z(0), X(D["brush_v"][1]), bot + 28)]
+    L += dim_h(X(D["brush_v"][0]), X(D["brush_v"][1]), bot + 27, f"{D['brush_len']:,.0f} brushed length, {P['brush_d']:.0f} dia", above=False)
     L += [ext(X(bb.max.X) + 1, Z(0), X(bb.max.X) + 10, Z(0)), ext(X(bb.max.X) + 1, Z(bb.max.Z), X(bb.max.X) + 10, Z(bb.max.Z))]
     L += dim_v(X(bb.max.X) + 8, Z(bb.max.Z), Z(0), f"{bb.max.Z:.0f} above glass", left=False)
     # section line A-A

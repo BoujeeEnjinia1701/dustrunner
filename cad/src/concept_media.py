@@ -216,8 +216,8 @@ def exploded_parts():
     stop = stop_local(0.0)
     lo = stop & bx(-100, 100, -100, 200, -200, 200)
     hi = stop & bx(-100, 100, MOD_L - 200, MOD_L + 100, -200, 200)
-    add("stop", Pos(700, 0, 0) * lo, (0, -250, -250))
-    add("stop", Pos(700, 0, 0) * hi, (0, 250, 0), numbered=False)
+    add("stop", Pos(1300, 0, 0) * lo, (0, -250, -250))
+    add("stop", Pos(1300, 0, 0) * hi, (0, 250, 0), numbered=False)
     return sorted(out, key=lambda p: (p.bom is None, p.bom or 0))
 
 
@@ -240,8 +240,9 @@ if __name__ == "__main__":
     render_all(parts, project="DustRunner", title="Row-cleaning crawler concept", dwg_no="DRN-DWG-010",
                key_figures=KEY_FIGURES, cut=False, flow=FLOW, scale_figure=False, context=[person])
     concept._render(exploded_parts(), md / "exploded.png", offsets=True, labels=True, azim=-35, elev=28,
-                    title="DustRunner: exploded view (robot laid flat; dock and end stop drawn beside it)")
-    concept._render(cutaway_detail(), md / "cutaway.png", azim=-90, elev=6, labels=True,
+                    title="DustRunner: exploded view",
+                    note="Robot laid flat; dock and end stop drawn beside it; numbers match bom/bom.csv")
+    concept._render(cutaway_detail(), md / "cutaway.png", azim=-90, elev=0, labels=True,
                     title="DustRunner: section across the row at the lower module edge",
                     note="Silver: module frame; blue: glass. Truck (5) wheels ride the frame top; rollers (7) bear on the frame "
                          "face and hook under its lip")
