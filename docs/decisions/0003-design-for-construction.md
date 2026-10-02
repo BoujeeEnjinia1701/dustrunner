@@ -3,9 +3,9 @@ doc_id: DRN-DDR-003
 title: DustRunner design for construction
 project: DustRunner
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,12 +17,16 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Accepted by Amish on 2026-10-02, including the recommendations for A2 to A4
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-09-30
-- **Status:** Draft. The changes in Tables 1 and 2 were made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. The items in Table 3 change a requirement and are Proposed, awaiting Amish.
+- **Status:** accepted. Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This covers every change in Tables 1 and 2 and the recommendations in Table 3 (A2 to A4), which are now decided as recommended and recorded in the design decisions register (DRN-DEC-001).
 
 ## Context
 
@@ -65,16 +69,18 @@ The changes keep what DustRunner does: the same full-width brush and its interfe
 | Documents | DRN-CAL-001 v0.3, DRN-REQ-001 v0.5, DRN-PRC-001 v0.5 updated. R10 (mass), R13 and R14 now not met; no target changed. | Follows the model. |
 | Wind, stopping, energy | Parked and running wind checks still hold with factors over 4; brush and robot stop in 0.13 and 0.07 s; 68 W cleaning, 7.7 Wh per 40 m cycle. | Recalculated in DRN-CAL-001 v0.3. |
 
-*Table 3. Proposed, awaiting Amish (these change a requirement; A1 is a value-engineering note, not a decision).*
+*Table 3. Items that change a requirement: proposed, then accepted by Amish as recommended on 2026-10-02 (A1 is a value-engineering note, not a decision).*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
 | A1 | Parts now cost $573 against the value-engineering target of $500 (`budget_usd`, a hypothetical control target), USD 73 over. | No decision needed. The target stays $500; savings worth trying at quotes are cheaper bearings and a lighter dock. | Carry in the value engineering section of DRN-DEC-001. |
-| A2 | The robot weighs 15.9 kg against R10's 15 kg, though every wheel load meets R10. | (a) restate R10's mass limit as 16.5 kg, keeping the 60 N and 75 N wheel-load limits that protect the modules; (b) find about 1 kg (4 mm truck plates, pocketed plates, 1.5 mm lower housing); (c) both: restate now, weigh at TRL 4. | (c). |
-| A3 | At $573 the payback on a 60 m row is 3.2 years (R14 not met); 3 years needs a row of about 64 m. | (a) restate R14 as "3 years or less on rows of 65 m or more"; (b) keep R14 and treat it as at risk until quotes; (c) relax it to 3.5 years on 60 m. | (b), revisited once quotes exist. |
-| A4 | Latch release: the robot lifts its own latch pin with a solenoid (P9). | (a) robot-side solenoid as modelled; (b) solenoid on the dock, switched through a fourth contact; (c) a passive latch the robot pulls out of with its drives (no pin in shear, so the parked wind case must be rechecked). | (a). |
+| A2 | The robot weighs 15.9 kg against R10's 15 kg, though every wheel load meets R10. | (a) restate R10's mass limit as 16.5 kg, keeping the 60 N and 75 N wheel-load limits that protect the modules; (b) find about 1 kg (4 mm truck plates, pocketed plates, 1.5 mm lower housing); (c) both: restate now, weigh at TRL 4. | (c). Accepted 2026-10-02: R10's mass limit is 16.5 kg, wheel-load limits unchanged. |
+| A3 | At $573 the payback on a 60 m row is 3.2 years (R14 not met); 3 years needs a row of about 64 m. | (a) restate R14 as "3 years or less on rows of 65 m or more"; (b) keep R14 and treat it as at risk until quotes; (c) relax it to 3.5 years on 60 m. | (b), revisited once quotes exist. Accepted 2026-10-02: R14 is kept and marked at risk. |
+| A4 | Latch release: the robot lifts its own latch pin with a solenoid (P9). | (a) robot-side solenoid as modelled; (b) solenoid on the dock, switched through a fourth contact; (c) a passive latch the robot pulls out of with its drives (no pin in shear, so the parked wind case must be rechecked). | (a). Accepted 2026-10-02. |
 
 ## Consequences
+
+- With A2 to A4 accepted (2026-10-02): R10's mass limit is restated as 16.5 kg (DRN-REQ-001), so the 15.9 kg robot meets it on paper and is weighed at TRL 4; R14 stays at 3 years on rows of 60 m or more and is at risk until quotes; the robot-side solenoid stays as drawn.
 
 - `design_state: constructable` in `project.yaml`. The build plan DRN-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`). Open decisions are in the design decisions register DRN-DEC-001.
 - Requirement status (DRN-CAL-001 v0.3): 5 met, 3 at risk (R4, R9, R11), 3 not met (R10 on mass, R13, R14), 4 not verifiable at TRL 3. Before: 7 met, 4 at risk, none not met.

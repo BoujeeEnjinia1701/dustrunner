@@ -3,9 +3,9 @@ doc_id: DRN-PRC-001
 title: DustRunner design precis
 project: DustRunner
 doc_type: Design precis
-version: "0.6"
+version: "0.7"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -33,6 +33,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Decisions of 2026-10-02 (DRN-DEC-001 v0.3): R10 met on paper at the restated 16.5 kg, R14 at risk, first candidate pilot site'
 ---
 
 # DustRunner design precis
@@ -99,7 +103,7 @@ All values are from DRN-CAL-001 v0.2, which prints each from `docs/04-calcs/sizi
 
 | Quantity | Value | Requirement |
 | --- | --- | --- |
-| Robot mass | 15.9 kg, including about 2.1 kg added for construction | R10 not met (15 kg) |
+| Robot mass | 15.9 kg, including about 2.1 kg added for construction | R10 met on paper (16.5 kg, restated 2026-10-02); weighed at TRL 4 |
 | Brush contact | About 67 N on the glass, 30 N drag, 28 W mechanical (13 to 50 W over the assumed ranges) | |
 | Electrical power while cleaning | 67 W (brush 47 W, drives 17 W, electronics 3 W) | |
 | Wheel load | 55 N brushing at 25°; 58 N at worst tilt; about 72 N for about a second at row entry | R10 met (75 N allowed for the transient, DRN-DDR-002) |
@@ -113,7 +117,7 @@ All values are from DRN-CAL-001 v0.2, which prints each from `docs/04-calcs/sizi
 | Coverage | 98.4 % of the glass on the 40 m row | R5 met |
 | Stopping | Brush 0.13 s, robot 0.06 s after power is cut | R12 met |
 | Parts cost | $573.00 (16 lines) | Over the value-engineering target by USD 73 (R13, target $500) |
-| Payback, mid case | 3.2 years on a 60 m row (3 years from 63.5 m); 1.9 years on 100 m; 4.7 years on the 40 m reference row | R14 not met as restated |
+| Payback, mid case | 3.2 years on a 60 m row (3 years from 63.5 m); 1.9 years on 100 m; 4.7 years on the 40 m reference row | R14 at risk (kept, not restated; 2026-10-02) |
 
 The pack is cycled lightly (under 10 % of capacity a day on the reference row), which is kind to LiFePO4 cells in heat. The beam is not critical: with its load and a 250 N point load at mid-span it is stressed to about 17 MPa and deflects about 2.9 mm. Water saved is about 122 to 350 L per avoided wash of the reference row, about 1.5 to 4.2 m³ a year for monthly washing.
 
@@ -157,4 +161,4 @@ Amish decided the design choices below on 2026-09-25 by approving the TRL 2 reco
 - [ ] Pack temperature when parked in the sun, and the charging window it allows (R11).
 - [ ] Module makers' positions on frame loading, including the 72 N row-entry transient, and on robotic dry cleaning (R10).
 - [ ] How dust conveyed off the lower edge builds up at the lower frame lip over time.
-- [ ] Pilot site and co-design partner (DRN-DDR-001, O1).
+- [ ] Pilot site and co-design partner (DRN-DDR-001, O1). Decided 2026-10-02: a university or national lab outdoor PV test site in a dusty climate; first candidate to approach Arizona State University's Photovoltaic Reliability Laboratory in Mesa.

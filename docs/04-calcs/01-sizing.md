@@ -3,9 +3,9 @@ doc_id: DRN-CAL-001
 title: DustRunner sizing calculations
 project: DustRunner
 doc_type: Calculation
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,15 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.5"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Requirement status updated for Amish''s decisions of 2026-10-02: R10 mass limit restated as 16.5 kg (met on paper), R14 kept and at risk; no number re-run'
 ---
 
 # DustRunner sizing calculations
 
-On paper, DustRunner meets five of its fifteen requirements, has three at risk and three short of their targets; four cannot be verified at TRL 3. Version 0.3 re-runs every number for the constructable design of DRN-DDR-003, which adds the bearings, housings, brackets, clamps and fittings that the concept left out. Those parts add about 2.1 kg and $73, and that is what moves three requirements off their targets: the robot weighs 15.9 kg against the 15 kg of R10 (although every wheel load still meets R10's 60 N steady and 75 N transient limits, because the hook preload drops from 70 N to 60 N by the same rule that set it); the parts cost $573, USD 73 over the $500 value-engineering target of R13; and the payback on a 60 m row is 3.2 years against the 3 years of R14 (it is met on rows of 63.5 m or more). The three at risk are frame fit (R4), where a 5 mm height step between modules is climbable only with both wheels driven and a thin margin; staying on the row (R9), where traction at the 6 m/s start limit set by DRN-DDR-002 is 1.30 times the resistance at an assumed friction coefficient of 0.4, but only 0.98 at 0.3; and environment (R11), where the pack may exceed its 45 °C charging limit in the sun. Whether to restate R10 and R14 is for Amish, and the mass and cost savings worth trying are in DRN-DEC-001. The TRL 3 calculations had already changed three parts of the TRL 2 concept: the brush core grew from 40 mm to 50 mm so that the pile interference stays in the 3 to 5 mm band along the whole brush, the hook preload was set by a wheel-load rule, and the hood is thinner (0.8 mm). Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C4], is the line of that script's output that carries it.
+On paper, DustRunner meets six of its fifteen requirements, has four at risk and one short of its target; four cannot be verified at TRL 3 (status as decided by Amish on 2026-10-02, below). Version 0.3 re-runs every number for the constructable design of DRN-DDR-003, which adds the bearings, housings, brackets, clamps and fittings that the concept left out. Those parts add about 2.1 kg and $73, and that is what moves three requirements off their targets: the robot weighs 15.9 kg against the 15 kg of R10 (although every wheel load still meets R10's 60 N steady and 75 N transient limits, because the hook preload drops from 70 N to 60 N by the same rule that set it); the parts cost $573, USD 73 over the $500 value-engineering target of R13; and the payback on a 60 m row is 3.2 years against the 3 years of R14 (it is met on rows of 63.5 m or more). The three at risk are frame fit (R4), where a 5 mm height step between modules is climbable only with both wheels driven and a thin margin; staying on the row (R9), where traction at the 6 m/s start limit set by DRN-DDR-002 is 1.30 times the resistance at an assumed friction coefficient of 0.4, but only 0.98 at 0.3; and environment (R11), where the pack may exceed its 45 °C charging limit in the sun. On 2026-10-02 Amish restated R10's mass limit as 16.5 kg, keeping the wheel-load limits, so R10 is met on paper and the robot is weighed at TRL 4, and kept R14 at 3 years on rows of 60 m or more, marked at risk until quotes; the mass and cost savings worth trying are in DRN-DEC-001. The TRL 3 calculations had already changed three parts of the TRL 2 concept: the brush core grew from 40 mm to 50 mm so that the pile interference stays in the 3 to 5 mm band along the whole brush, the hook preload was set by a wheel-load rule, and the hood is thinner (0.8 mm). Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [C4], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They do not replace tests of traction, wind hold-down, end stops, stopping time, battery temperature or glass abrasion, and nothing may be installed on a live array on the strength of this note. See DRN-PRC-001, Safety.
 
@@ -186,14 +190,14 @@ The robot shades each module for a few seconds in the evening, which costs 1 to 
 | R7 | Cycle time | 100 m row in 20 min or less | 17.4 min [F4] | Met |
 | R8 | Energy autonomy | Three 100 m cycles with no sun; recharge at 3 sun hours | 68 of 102 Wh [F5]; 45 Wh against 23 Wh a day [F6] | Met |
 | R9 | Stay on the row | End stops; start below 6 m/s, abort at 8 m/s; survive 35 m/s parked | Parked and end stop hold with factors over 4 [D1 to D4]; traction margin 1.30 at 6 m/s [C13], 1.07 at 8 m/s [C4], friction 0.4; 0.98 at 6 m/s with friction 0.3 | At risk |
-| R10 | Load on the modules | 15 kg or less; 60 N or less per wheel steady, 75 N at row entry | 15.9 kg [A3]; 59 N brushing at worst tilt [C8]; 73 N for about a second at row entry [C2] | Not met (mass); wheel loads met |
+| R10 | Load on the modules | 16.5 kg or less (restated 2026-10-02); 60 N or less per wheel steady, 75 N at row entry | 15.9 kg [A3]; 59 N brushing at worst tilt [C8]; 73 N for about a second at row entry [C2] | Met on paper; weigh at TRL 4 |
 | R11 | Environment | IP65; 0 to 50 °C ambient; glass to 75 °C | Pack in the sun may exceed its 45 °C charge limit; sunshade added | At risk |
 | R12 | Safe to be near | Stop within 2 s; guards; stops on each truck | 0.13 s brush, 0.07 s robot [H1]; belt guards and a stop button in each truck plate | Met |
 | R13 | Affordable | Parts at or below the $500 value-engineering target | $573.00 [I1] | Over the value-engineering target by USD 73 |
-| R14 | Pays for itself | 3 years or less on rows of 60 m or more, mid case | 3.2 years [I4]; met from 63.5 m [I9]; 4.0 years with yearly sleeves [I6] | Not met |
+| R14 | Pays for itself | 3 years or less on rows of 60 m or more, mid case | 3.2 years [I4]; met from 63.5 m [I9]; 4.0 years with yearly sleeves [I6] | At risk (kept, not restated, 2026-10-02) |
 | R15 | Serviceable | Sleeve change in 15 min on the row; catalog parts | Catalog parts; time cannot be calculated | Not verifiable at TRL 3 |
 
-Counts: 5 met, 3 at risk, 3 short of target (R13 over the value-engineering target), 4 not verifiable at TRL 3 [J0]. Version 0.2 had 7 met, 4 at risk and none not met; R10, R13 and R14 changed with the constructable design (DRN-DDR-003), and R13 moved from at risk to over the value-engineering target.
+Counts: 6 met, 4 at risk, 1 short of target (R13 over the value-engineering target), 4 not verifiable at TRL 3, after Amish's decisions of 2026-10-02 on R10 and R14 ([J0] printed 5, 3, 3 and 4 before them). Version 0.2 had 7 met, 4 at risk and none not met; R10, R13 and R14 changed with the constructable design (DRN-DDR-003), and R13 moved from at risk to over the value-engineering target.
 
 ## Checks against the TRL 2 figures (version 0.2 values)
 

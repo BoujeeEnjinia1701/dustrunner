@@ -3,9 +3,9 @@ doc_id: DRN-PRB-001
 title: DustRunner problem statement
 project: DustRunner
 doc_type: Problem statement
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-26'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-09-26'
   author: Amish Chadha
   change: Stronger sources
+- version: "0.5"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: First candidate pilot site and co-design partner, as decided by Amish on 2026-10-02
 ---
 
 # DustRunner problem statement
@@ -85,6 +89,6 @@ The gap DustRunner targets is an open, garage-buildable robot for one small row 
 
 ## Open questions
 
-- Which pilot site and co-design partner to work with first (a solar pumping farm, a mini-grid operator or a university test array)? Proposed, awaiting Amish; partners are to be picked per area later.
+- Which pilot site and co-design partner to work with first (a solar pumping farm, a mini-grid operator or a university test array)? Decided by Amish on 2026-10-02: a university or national lab outdoor PV test site in a dusty climate, with Arizona State University's Photovoltaic Reliability Laboratory in Mesa as the first candidate to approach (DRN-DEC-001).
 - First module and table format: decided by Amish on 2026-09-25 as 1P portrait tables of 2,278 mm modules (DRN-DDR-001, D10). The visible frame flange width of target modules still needs a survey (DRN-CAL-001, C12).
 - Is daily dry cleaning effective on the local dust, or does dew cementation limit it? This needs site dust data and later testing.

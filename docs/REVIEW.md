@@ -269,3 +269,44 @@ The design changed visibly, so `media/render-hero.png`, `media/render-exploded.p
 ### Recommended next step
 
 Amish reviews DRN-DDR-003 and the register, and decides the budget, R10 and R14 items. TRL 4 stays on hold; the build plan is paper only.
+
+## Session 2026-10-02: open decisions decided
+
+Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This approves the recommendation written for each open decision in the design decisions register (DRN-DEC-001 v0.2). trl stays 3; no build or test work was done, and the model, BOM quantities and prices, and pictures are unchanged.
+
+### Decisions recorded
+
+Seven decisions, all moved to Decisions made in DRN-DEC-001, dated 2026-10-02:
+
+1. DRN-DDR-003 accepted: design-for-construction changes P1 to P16, as drawn.
+2. Robot mass: option (c), R10's mass limit restated as 16.5 kg, the 60 N and 75 N wheel-load limits unchanged; the robot is weighed at TRL 4.
+3. Payback: option (b), R14 kept at 3 years on 60 m rows and marked at risk; revisited when real quotes exist.
+4. Latch release: option (a), the robot-side 12 V solenoid lifts its own pin.
+5. Pilot site and co-design partner: a university or national lab outdoor PV test site in a dusty climate; Arizona State University's Photovoltaic Reliability Laboratory in Mesa is the first candidate to approach.
+6. Appearance items 1 to 6 accepted for renders, except that the dock contact bracket and bearing flanges (item 5) come from the constructable design, not as appearance-only parts.
+7. Renders: option (a), update the appearance model to the constructable design and re-render on Amish's Mac.
+
+Requirement status after decisions 2 and 3: 6 met on paper (R10 now met at 15.9 kg against 16.5 kg), 4 at risk (R4, R9, R11 and R14), 1 short of target (R13, USD 73 over the value-engineering target), 4 not verifiable at TRL 3.
+
+### Documents changed
+
+- `docs/06-design-decisions.md` (DRN-DEC-001 v0.3): open decisions moved to Decisions made; the truck-plate saving and the 2026-09-30 row updated.
+- `docs/decisions/0003-design-for-construction.md` (DRN-DDR-003 v0.3, status Draft): accepted, with A2 to A4 accepted as recommended and a consequence added.
+- `docs/decisions/0001-trl2-review-decisions.md` (DRN-DDR-001 v0.2) and `docs/decisions/0002-recommendations-accepted.md` (DRN-DDR-002 v0.2): O1 recorded as decided.
+- `docs/03-requirements.md` (DRN-REQ-001 v0.7): R10 restated to 16.5 kg (met on paper); R14 at risk; summary counts.
+- `docs/04-calcs/01-sizing.md` (DRN-CAL-001 v0.5): requirement table status for R10 and R14, counts and summary; no number re-run.
+- `docs/02-concept.md` (DRN-PRC-001 v0.7): key numbers status for R10 and R14; pilot site question answered.
+- `docs/01-problem.md` (DRN-PRB-001 v0.5): pilot site question answered.
+- `README.md`: requirement summary.
+
+### Follow-up actions to carry approved decisions into the design
+
+1. Decision 2 (calculations): change R10's mass limit to 16.5 kg in `docs/04-calcs/sizing.py` so that its status line [J0] prints the decided counts.
+2. Decision 3 (calculations): print R14 as at risk in `sizing.py` [J0], and recheck payback when real quotes exist.
+3. Decision 6 (model): build the dock contact bracket and the bearing flanges in `cad/src/product_model.py` from the constructable parts of `cad/src/model.py`, not as appearance-only parts.
+4. Decision 7 (pictures): update `cad/src/product_model.py` to the constructable design (trucks, hook arms, dock legs, vertical mast) and re-render the photoreal renders, `media/card.png` and `media/social-preview.png` on Amish's Mac.
+
+### Points found in the review
+
+- The row length at which payback reaches 3 years is given three ways: 63.5 m (DRN-DDR-003 and R14), about 64 m (the register's former item 3 and the README) and 65 m (option a).
+- R14 was marked "Not met" in the requirements while the recommendation was to treat it as at risk; aligned now that item 3 is decided.

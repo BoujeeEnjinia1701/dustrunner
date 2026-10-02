@@ -3,9 +3,9 @@ doc_id: DRN-DDR-001
 title: DustRunner TRL 2 review decisions
 project: DustRunner
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record Amish's decisions on the TRL 2 review items and the items that remain open
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: O1 decided by Amish on 2026-10-02 as recommended (ASU Photovoltaic Reliability Laboratory as first candidate pilot site)
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** accepted for items D1 to D12; item O1 remains proposed
+- **Status:** accepted for items D1 to D12; item O1 decided on 2026-10-02 as recommended (Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions.")
 
 ## Context
 
@@ -53,7 +57,7 @@ The options for each item are those listed in `docs/REVIEW.md` (session 2026-09-
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | Pilot site and co-design partner: a solar pumping farm, a mini-grid operator or a university test array | Proposed, awaiting Amish (co-design partners to be picked per area later, as Amish directed for community designs) |
+| O1 | Pilot site and co-design partner: a solar pumping farm, a mini-grid operator or a university test array | Decided by Amish on 2026-10-02 as recommended in DRN-DEC-001: a university or national lab outdoor PV test site in a dusty climate, with Arizona State University's Photovoltaic Reliability Laboratory in Mesa as the first candidate to approach |
 
 ## Consequences
 
