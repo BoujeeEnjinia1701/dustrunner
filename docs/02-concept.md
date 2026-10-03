@@ -3,7 +3,7 @@ doc_id: DRN-PRC-001
 title: DustRunner design precis
 project: DustRunner
 doc_type: Design precis
-version: "0.7"
+version: "0.8"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -37,6 +37,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: 'Decisions of 2026-10-02 (DRN-DEC-001 v0.3): R10 met on paper at the restated 16.5 kg, R14 at risk, first candidate pilot site'
+- version: "0.8"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Follow-ups carried out: calculation script re-run with the decided R10 and R14 status; numbers unchanged'
 ---
 
 # DustRunner design precis

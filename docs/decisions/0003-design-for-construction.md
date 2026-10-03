@@ -3,7 +3,7 @@ doc_id: DRN-DDR-003
 title: DustRunner design for construction
 project: DustRunner
 doc_type: Design decision record
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Accepted by Amish on 2026-10-02, including the recommendations for A2 to A4
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Consequences updated: appearance model brought into line with the constructable design'
 ---
 
 # 0003: Design for construction
@@ -84,5 +88,5 @@ The changes keep what DustRunner does: the same full-width brush and its interfe
 
 - `design_state: constructable` in `project.yaml`. The build plan DRN-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`). Open decisions are in the design decisions register DRN-DEC-001.
 - Requirement status (DRN-CAL-001 v0.3): 5 met, 3 at risk (R4, R9, R11), 3 not met (R10 on mass, R13, R14), 4 not verifiable at TRL 3. Before: 7 met, 4 at risk, none not met.
-- The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept trucks, hook arms, dock and mast; they need updating on Amish's Mac, where Blender is.
+- The appearance model `cad/src/product_model.py` now takes the trucks, hook arms, dock, legs and mast from the constructable design in `cad/src/model.py`. The photoreal renders (`media/render-*.png`), `media/card.png` and `media/social-preview.png` are made from it on Amish's Mac, where Blender is.
 - The module frame's bottom flange width and the room above it for the clamp jaw, and the parts' real masses, are checked when parts are bought (TRL 4).

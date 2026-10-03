@@ -1,4 +1,4 @@
-"""DustRunner general arrangement sheet DRN-DWG-001, Rev P3 (TRL 3, constructable design of DRN-DDR-003).
+"""DustRunner general arrangement sheet DRN-DWG-001, Rev P4 (TRL 3, constructable design of DRN-DDR-003).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/DRN-DWG-001.svg, .pdf and .png from the parametric model in
@@ -19,6 +19,7 @@ from model import PARAMS as P, derived, robot, frame_edge, mirror_v  # noqa: E40
 
 DATE = "2026-09-25"
 DATE3 = "2026-09-30"
+DATE4 = "2026-10-02"
 STUB = 150.0      # half length of the reference frame stubs along the row
 
 
@@ -99,11 +100,12 @@ def main():
     sec = Compound(children=[c & slab for c in (to_sheet * robot(P), to_sheet * stubs)])
     sviews = safe_project_views(sec, work / "sec", hidden_right=False)
     sbb = sec.bounding_box()
-    s = Sheet(project="DustRunner", title="General arrangement, robot on the module frames", dwg_no="DRN-DWG-001", rev="P3",
-              author="Amish Chadha", date=DATE3, scale=None, theme="technical",
+    s = Sheet(project="DustRunner", title="General arrangement, robot on the module frames", dwg_no="DRN-DWG-001", rev="P4",
+              author="Amish Chadha", date=DATE4, scale=None, theme="technical",
               material="6063 aluminum beam, plates and hood; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"), ("P2", "Layout and labels tidied", "2026-09-30", "AC"),
-                         ("P3", "Constructable design (DRN-DDR-003): bearings, housings, clevises, sliders, cleats", DATE3, "AC")])
+                         ("P3", "Constructable design (DRN-DDR-003): bearings, housings, clevises, sliders, cleats", DATE3, "AC"),
+                         ("P4", "Reissued after the 2026-10-02 decisions; no geometry change (R10 mass limit 16.5 kg)", DATE4, "AC")])
     s.add_ortho(views, names=("front", "top"))
     k = s.scale
     c = ortho_cells(s, views)

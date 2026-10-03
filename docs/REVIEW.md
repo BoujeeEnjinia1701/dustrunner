@@ -310,3 +310,34 @@ Requirement status after decisions 2 and 3: 6 met on paper (R10 now met at 15.9 
 
 - The row length at which payback reaches 3 years is given three ways: 63.5 m (DRN-DDR-003 and R14), about 64 m (the register's former item 3 and the README) and 65 m (option a).
 - R14 was marked "Not met" in the requirements while the recommendation was to treat it as at risk; aligned now that item 3 is decided.
+
+## Approved follow-ups carried out (2026-10-02)
+
+Amish approved all follow-up actions from the 2026-10-02 sign-off. trl stays 3; no build or test work was done. No decision changed the geometry or the BOM, so `cad/src/model.py`, STEP, STL, `bom/bom.csv` and all build plan and concept pictures are unchanged.
+
+### Follow-ups
+
+1. Decision 2 (calculations): done. `docs/04-calcs/sizing.py` tests R10 against 16.5 kg (restated 2026-10-02); R10 is met at 15.9 kg.
+2. Decision 3 (calculations): done. `sizing.py` prints R14 as at risk (3.2 years on a 60 m row against the 3 years kept; met from 63.5 m); payback is to be rechecked when real quotes exist (TRL 4 work, not done here). The cost line [I1] now uses the value-engineering wording: "Value-engineering target: USD 500. Estimated cost of the constructable design: USD 573 (USD 73 over the target)". R13 prints as "Short of target". The printed counts [J0] now agree with the decided counts: 6 met, 4 at risk, 1 short of target, 4 not verifiable at TRL 3.
+3. Decision 6 (model): done. The dock contact bracket, the dock contact post and block, the latch solenoid and tab, and the flange bearings (axle and brush) in `cad/src/product_model.py` are now model.py's own parts, not appearance-only parts.
+4. Decision 7 (appearance model and pictures): done in part. `cad/src/product_model.py` now takes both end trucks (plates, drive housings, clevis-mounted guide rollers, sprung hook sliders, beam cleats, sensor brackets), the beam cleat holes, hood spacers, sunshade posts and pack straps, the dock (rails on brackets, cross members, clamps, ties, vertical legs on foot plates, panel on the ties, charger, contact post) and the vertical mast with its clamps and the three-piece end stops from the constructable model. Render scenes were exported to `/home/claude/renders/dustrunner` (hero, exploded, detail, and the jobs file). Not done: the photoreal renders, `media/card.png` and `media/social-preview.png`, which are made on Amish's Mac.
+
+### Key results
+
+- Cost: USD 573 against the USD 500 value-engineering target (USD 73 over); unchanged. Mass: robot 15.9 kg; unchanged. `budget_usd` is unchanged.
+- Requirement status changes: none in the documents (the script now prints the decided status). 6 met, 4 at risk (R4, R9, R11, R14), 1 short of target (R13), 4 not verifiable at TRL 3.
+- Appearance deviations from model.py: the truck plate has no lightening holes (they would clash with the bolts of the constructable truck), and the anemometer cups, panel cells and charger label are appearance detail. Recorded as accepted by decision 6 of 2026-10-02; nothing new is proposed.
+
+### Documents changed
+
+- `docs/04-calcs/01-sizing.md` (DRN-CAL-001 v0.6), `docs/03-requirements.md` (DRN-REQ-001 v0.8), `docs/02-concept.md` (DRN-PRC-001 v0.8), `docs/05-build-plan.md` (DRN-BLD-001 v0.3, Rev P4 reference), `docs/decisions/0003-design-for-construction.md` (DRN-DDR-003 v0.4).
+- `cad/src/sheets.py` and `cad/drawings/DRN-DWG-001` at Rev P4 (no geometry change); `cad/src/product_model.py`; `docs/04-calcs/sizing.py`.
+- PDFs re-rendered with `python3 .kit/render.py`.
+
+### Cross-repo actions
+
+None.
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

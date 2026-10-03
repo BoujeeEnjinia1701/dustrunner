@@ -3,7 +3,7 @@ doc_id: DRN-REQ-001
 title: DustRunner requirements
 project: DustRunner
 doc_type: Requirements
-version: "0.7"
+version: "0.8"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -37,11 +37,15 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: R10 mass limit restated as 16.5 kg (wheel loads unchanged) and R14 kept and marked at risk, as decided by Amish on 2026-10-02
+- version: "0.8"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Status from DRN-CAL-001 v0.6 (script re-run; printed counts agree with the decided counts); no target changed'
 ---
 
 # DustRunner requirements
 
-These requirements are checked by calculation in DRN-CAL-001 v0.3, for the constructable design of DRN-DDR-003. On paper, six are met, four are at risk, one falls short of its target and four cannot be verified at TRL 3. The parts added to make the design buildable moved R10, R13 and R14 off their targets; on 2026-10-02 Amish decided to restate R10's mass limit as 16.5 kg, keeping the wheel-load limits (the robot weighs 15.9 kg and is weighed at TRL 4), and to keep R14 and treat it as at risk until quotes (3.2 years on a 60 m row; met from 63.5 m). R13 falls short (estimated parts cost $573, USD 73 over the value-engineering target of $500); the cost savings worth trying are in the value engineering section of the design decisions register (DRN-DEC-001). The others at risk are R4 (5 mm frame steps and frame flange width), R9 (traction in wind along the row, margin 1.30 at the 6 m/s start limit but 0.98 if friction is only 0.3) and R11 (pack temperature while charging in the sun). R2, R3, R6 and R15 need tests or trials. Targets are still proposals for review, not validated with users or a pilot site, except where DRN-DDR-001 or DRN-DDR-002 records Amish's decision.
+These requirements are checked by calculation in DRN-CAL-001 v0.6, for the constructable design of DRN-DDR-003. On paper, six are met, four are at risk, one falls short of its target and four cannot be verified at TRL 3. The parts added to make the design buildable moved R10, R13 and R14 off their targets; on 2026-10-02 Amish decided to restate R10's mass limit as 16.5 kg, keeping the wheel-load limits (the robot weighs 15.9 kg and is weighed at TRL 4), and to keep R14 and treat it as at risk until quotes (3.2 years on a 60 m row; met from 63.5 m). R13 falls short (estimated parts cost $573, USD 73 over the value-engineering target of $500); the cost savings worth trying are in the value engineering section of the design decisions register (DRN-DEC-001). The others at risk are R4 (5 mm frame steps and frame flange width), R9 (traction in wind along the row, margin 1.30 at the 6 m/s start limit but 0.98 if friction is only 0.3) and R11 (pack temperature while charging in the sun). R2, R3, R6 and R15 need tests or trials. Targets are still proposals for review, not validated with users or a pilot site, except where DRN-DDR-001 or DRN-DDR-002 records Amish's decision.
 
 The **reference row** used throughout, kept by DRN-DDR-001 (D7), is one fixed-tilt table, one module high in portrait (1P), with 35 modules of 2,278 x 1,134 mm and about 580 W each: about 40 m long, about 90 m² of glass and about 20 kWp, tilted 25°, with the lower glass edge about 0.6 m above the ground. The first supported table format is 1P portrait with 2,278 mm modules (DRN-DDR-001, D10).
 

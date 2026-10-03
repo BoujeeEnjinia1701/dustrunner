@@ -3,7 +3,7 @@ doc_id: DRN-CAL-001
 title: DustRunner sizing calculations
 project: DustRunner
 doc_type: Calculation
-version: "0.5"
+version: "0.6"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -29,6 +29,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: 'Requirement status updated for Amish''s decisions of 2026-10-02: R10 mass limit restated as 16.5 kg (met on paper), R14 kept and at risk; no number re-run'
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Script re-run with R10 restated to 16.5 kg and R14 marked at risk, so the printed counts [J0] agree with the decided counts; cost wording in [I1] changed to the value-engineering wording; no computed number changed'
 ---
 
 # DustRunner sizing calculations
@@ -76,7 +80,7 @@ The design case is the reference row of DRN-REQ-001: a 1P portrait table of 2,27
 
 ## A. Mass and balance (R10)
 
-The robot weighs about 15.9 kg [A3], against 15 kg in R10, 13.8 kg in version 0.2 and about 12 kg at TRL 2. The made parts from the model are the beam (2.92 kg), the brush with its 50 mm core, end plugs and flange bearings (3.54 kg), the hood and sunshade (1.06 kg) and the two trucks with wheels, drive housings and bearings (3.64 kg) [A1]. The parts added to make the design buildable weigh about 2.1 kg in all (2.08 kg): drive housings, roller clevises, hook sliders, brackets, cleats, sunshade posts and core plugs 1.17 kg; brush flange bearings 0.40 kg; stop buttons, latch solenoid, straps and screws 0.34 kg; and 0.17 kg from truck plates 24 mm taller to carry the hook spring [A4]. R10's mass limit is therefore not met. The center of mass is 959 mm up the 2,278 mm slope, because the pack and controller sit near the lower end, and 116 mm above the glass [A3].
+The robot weighs about 15.9 kg [A3], against the 16.5 kg of R10 (restated from 15 kg on 2026-10-02), 13.8 kg in version 0.2 and about 12 kg at TRL 2. The made parts from the model are the beam (2.92 kg), the brush with its 50 mm core, end plugs and flange bearings (3.54 kg), the hood and sunshade (1.06 kg) and the two trucks with wheels, drive housings and bearings (3.64 kg) [A1]. The parts added to make the design buildable weigh about 2.1 kg in all (2.08 kg): drive housings, roller clevises, hook sliders, brackets, cleats, sunshade posts and core plugs 1.17 kg; brush flange bearings 0.40 kg; stop buttons, latch solenoid, straps and screws 0.34 kg; and 0.17 kg from truck plates 24 mm taller to carry the hook spring [A4]. R10's mass limit is therefore not met. The center of mass is 959 mm up the 2,278 mm slope, because the pack and controller sit near the lower end, and 116 mm above the glass [A3].
 
 ## B. Brush contact, drag and deflection (R3, R8)
 
@@ -173,7 +177,7 @@ The 16 BOM lines total $573.00 against the $500 value-engineering target, $73.00
 | **60 m row, 0.3 %/day (R14 case)** | **1,816 kWh/yr** | **$181/yr** | **3.2 yr** | [I4] |
 | 100 m row, 0.3 %/day | 3,039 kWh/yr | $304/yr | 1.9 yr | [I5] |
 
-The robot shades each module for a few seconds in the evening, which costs 1 to 2 kWh a year [I2 to I5]. R14, as restated by DRN-DDR-001 (D8), is not met at 3.2 years on the 60 m row; the shortest row that pays back in 3 years at $573 has 55 modules, 63.5 m [I9]. Two cautions apply. If a $40 set of sleeves is needed every year, the 60 m payback becomes 4.0 years [I6]. And the result depends on R2: the 60 m row would meet 3 years only if daily dry cleaning held the residual loss below 1.3 % [I7], against the assumed 1.5 %. Each avoided monthly wash of the 40 m row saves about 122 to 350 L of water, 1.5 to 4.2 m³ a year [I8].
+The robot shades each module for a few seconds in the evening, which costs 1 to 2 kWh a year [I2 to I5]. R14, as restated by DRN-DDR-001 (D8), is at risk at 3.2 years on the 60 m row (kept at 3 years and marked at risk by Amish on 2026-10-02; revisit when real quotes exist); the shortest row that pays back in 3 years at $573 has 55 modules, 63.5 m [I9]. Two cautions apply. If a $40 set of sleeves is needed every year, the 60 m payback becomes 4.0 years [I6]. And the result depends on R2: the 60 m row would meet 3 years only if daily dry cleaning held the residual loss below 1.3 % [I7], against the assumed 1.5 %. Each avoided monthly wash of the 40 m row saves about 122 to 350 L of water, 1.5 to 4.2 m³ a year [I8].
 
 ## J. Results against every requirement
 
@@ -197,7 +201,7 @@ The robot shades each module for a few seconds in the evening, which costs 1 to 
 | R14 | Pays for itself | 3 years or less on rows of 60 m or more, mid case | 3.2 years [I4]; met from 63.5 m [I9]; 4.0 years with yearly sleeves [I6] | At risk (kept, not restated, 2026-10-02) |
 | R15 | Serviceable | Sleeve change in 15 min on the row; catalog parts | Catalog parts; time cannot be calculated | Not verifiable at TRL 3 |
 
-Counts: 6 met, 4 at risk, 1 short of target (R13 over the value-engineering target), 4 not verifiable at TRL 3, after Amish's decisions of 2026-10-02 on R10 and R14 ([J0] printed 5, 3, 3 and 4 before them). Version 0.2 had 7 met, 4 at risk and none not met; R10, R13 and R14 changed with the constructable design (DRN-DDR-003), and R13 moved from at risk to over the value-engineering target.
+Counts: 6 met, 4 at risk, 1 short of target (R13 over the value-engineering target), 4 not verifiable at TRL 3, after Amish's decisions of 2026-10-02 on R10 and R14; `sizing.py` now prints the same counts [J0], having printed 5 met, 3 at risk, 3 not met and 4 not verifiable before them. Version 0.2 had 7 met, 4 at risk and none not met; R10, R13 and R14 changed with the constructable design (DRN-DDR-003), and R13 moved from at risk to over the value-engineering target.
 
 ## Checks against the TRL 2 figures (version 0.2 values)
 

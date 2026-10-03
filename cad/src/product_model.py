@@ -1,23 +1,27 @@
-"""DustRunner product appearance model (build123d), TRL 3.
+"""DustRunner product appearance model (build123d), TRL 3, updated 2026-10-02 to the constructable design.
 
 Finished-product look for photoreal renders: the robot on a compact two-module row of a ground-mount
 table, partway along the first module and moving away from its dock, with dusty glass still ahead of
 it. The robot gets a filleted anodized beam with a name plate and accent stripe, a white powder-coated
-brush hood with rolled edges and hangers, a microfiber brush sleeve on its core and stub shafts, a
-sunshade frame over a strapped LiFePO4 pack and an IP65 controller box with a clear side window
-(board, module and a lit status light behind it), a main switch and cable glands. Each end truck gets
-a graphite plate with fillets, lightening holes, bolts and a badge, polyurethane wheel tyres on metal
-hubs, a belt guard, a gearmotor with gearbox, can and encoder cap, guide rollers on clevis tabs, a
-hook arm with its roller and preload spring, IR edge sensors with lenses, charge contacts facing the
-dock and a red emergency stop on a yellow base. The dock gets C-section rails, cross members, clamps,
-legs with feet, a framed 20 W panel with cells, a charger box with a lit charge light, spring
-contacts with the latch pin, and a three-cup anemometer on its mast. End stops get rubber buffers.
+brush hood on nylon spacers, a microfiber brush sleeve on its core and stub shafts, a sunshade on
+four posts over a strapped LiFePO4 pack and an IP65 controller box with a clear side window (board,
+module and a lit status light behind it), a main switch and cable glands. Each end truck is
+model.py's constructable truck: a graphite plate with bolts and a badge, polyurethane wheels in
+2-bolt flange bearings, a folded drive housing carrying the gearmotor, guide rollers on folded
+clevises, a sprung hook slider with its roller and spring, beam end cleats, IR edge sensors on
+brackets and a red emergency stop on a yellow base; the lower truck also has the brush drive and
+gearmotor, the dock contact bracket and block, and the latch solenoid. The dock is model.py's
+constructable dock: C-section rails on rail brackets, cross members, frame clamps, ties, vertical
+square-tube legs on foot plates, a framed 20 W panel with cells, a charger box with a lit charge
+light, the contact post with its latch tab, and a vertical anemometer mast in two clamps with a
+three-cup head. End stops are the clamp-on three-piece blocks with rubber buffers.
 Context: two reference modules (cells, backsheet, frames), purlins, rafters, posts with footings and
 a compact patch of gravel ground.
 APPEARANCE MODEL ONLY: no tolerances, no fabrication detail. CONCEPT, NOT FOR FABRICATION.
 
 Every main dimension and interface comes from PARAMS, derived() and the geometry in model.py
-(robot_parts, dock_parts, stop_parts, frame_edge, leg_local). Parts are built in model.py's local
+(_truck, _brush_and_hood, build_components for the dock, _stops, frame_edge). The dock contact
+bracket and the bearing flanges are the model's own parts, not appearance-only (decision of 2026-10-02). Parts are built in model.py's local
 table coordinates (u along the row, v up the slope, w normal to the glass) and then placed in world
 coordinates with the same transform as cad/src/concept_media.py (table tilted by PARAMS["tilt"], lower
 glass edge PARAMS["h0"] above the ground, Z up), because the renderer needs Z up and a ground plane.
@@ -37,7 +41,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from build123d import Axis, Box, Cylinder, Pos, RegularPolygon, Rot, Sphere, extrude, fillet
-from model import PARAMS, derived, bx, cyl_v, cyl_w, mirror_v, frame_edge, leg_local
+from model import (PARAMS, derived, bx, cyl_v, cyl_w, mirror_v, frame_edge, tube, build_components,  # noqa: E402
+                   _truck, _brush_and_hood, _stops as _model_stops)
 
 TITLE = "DustRunner: rail-free cleaning robot for solar panel rows"
 
@@ -154,21 +159,32 @@ def _hex_w(u, v, w0, w1, af):
 
 
 # ---------------- robot pieces (local, robot centred at u = 0) ----------------
-def _lower_truck(D):
-    """Lower end truck and brush drive pieces: list of (name, shape, color, material, bom, explode)."""
+_MEMO = {}
+
+
+def _tr(lower):
+    """model.py's end truck (memoised): lower=True has the brush drive, dock contacts and latch solenoid."""
+    if lower not in _MEMO:
+        _MEMO[lower] = _truck(P, lower=lower)
+    return _MEMO[lower]
+
+
+def _truck_items(D, lower):
+    """One end truck, taken from model.py's constructable parts (plate, flange bearings, drive housing,
+    clevis-mounted guide rollers, sprung hook slider, beam cleats, sensor brackets; for the lower truck
+    also the brush drive, dock contact bracket and latch solenoid), coloured for the renders.
+    Returns a list of (name, shape, color, material, bom, explode)."""
+    c = _tr(lower)
     pv0, pv1 = D["plate_v"]
+    hv0 = D["housing_v"][0]
     hu = P["plate_half_u"]
-    wc, wr = D["wheel_c"], P["wheel_d"] / 2
+    wc = D["wheel_c"]
     w_lo, w_hi = P["plate_w"]
     items = []
 
-    plate = bx(-hu, hu, pv0, pv1, w_lo, w_hi)
-    plate = _fillet_try(plate, _par(plate, Axis.Y), [14.0, 10.0, 6.0])
-    for su in (-1, 1):
-        plate -= cyl_v(su * 80, 100, pv0 - 1, pv1 + 1, 18.0)
-    plate = _fillet_try(plate, _face_edges(plate, Axis.Y, 0), [1.2, 0.8, 0.5])
+    blank = bx(-hu, hu, pv0, pv1, w_lo, w_hi)
+    plate = _fillet_try(blank, _par(blank, Axis.Y), [14.0, 10.0, 6.0]) - (blank - c["plate"])
     items.append(("End truck plate", plate, C_GRAPH, "painted", 5, (0, -380, 0)))
-
     bolts = _sum(_hex_v(su * 12, pv0 - 4, pv0, wz, 10.0) for su in (-1, 1) for wz in (175, 205))
     items.append(("Truck plate bolts", bolts, C_ALU, "metal", 15, (0, -420, 0)))
     badge = bx(-120, -50, pv0 - 0.5, pv0, 162, 194)
@@ -177,35 +193,15 @@ def _lower_truck(D):
     bprint = bx(-112, -70, pv0 - 0.8, pv0 - 0.5, 180, 186) + bx(-112, -85, pv0 - 0.8, pv0 - 0.5, 170, 173)
     items.append(("Truck badge print", bprint, C_LABEL, "paper", 5, (0, -400, 0)))
 
-    # brush stub shaft and bearing flange on the inboard face of the plate
-    bw, v0 = D["brush_w"], D["brush_v"][0]
-    sh = cyl_v(0, bw, pv0 - 6, v0 - 4, P["shaft_d"] / 2) + cyl_v(0, bw, pv1, pv1 + 7, 22.0)
-    sh = _fillet_try(sh, [e for e in sh.edges() if abs(_erad(e) - 22.0) < 0.5], [1.5, 1.0])
-    items.append(("Brush shaft and bearing flange", sh, C_ALU, "metal", 2, (0, -200, 0)))
+    items.append(("Wheel tyres (polyurethane)", c["wheels"], C_ACCENT, "rubber", 5, (0, -330, 0)))
+    items.append(("Wheel axles, pulleys and belt", c["axles"] + c["coupling"], C_ALU, "metal", 5, (0, -330, 0)))
+    items.append(("Axle flange bearings (2-bolt)", c["axle_bearings"], C_ALU_D, "metal", 5, (0, -250, 0)))
+    items.append(("Drive housing (folded sheet)", c["housing"], C_DARK, "painted", 5, (0, -500, 0)))
+    items.append(("Brush flange bearing", c["brush_bearing"], C_ALU_D, "metal", 2, (0, -200, 0)))
 
-    # wheels: polyurethane tyres on metal hubs, axles into the plate
-    tyres, hubs = [], []
-    v0w, v1w = P["wheel_v"]
-    for su in (-1, 1):
-        u = su * P["wheel_u"]
-        t = cyl_v(u, wc, v0w, v1w, wr) - cyl_v(u, wc, v0w - 1, v1w + 1, wr - 8)
-        t = _fillet_try(t, [e for e in t.edges() if abs(_erad(e) - wr) < 0.5], [3.0, 2.0, 1.0])
-        tyres.append(t)
-        h = cyl_v(u, wc, v0w + 1, v1w - 1, wr - 8) - cyl_v(u, wc, v1w - 3, v1w, wr - 14)
-        h += cyl_v(u, wc, pv1, v0w + 1, 5.0)
-        hubs.append(h)
-    items.append(("Wheel tyres (polyurethane)", _sum(tyres), C_ACCENT, "rubber", 5, (0, -330, 0)))
-    items.append(("Wheel hubs and axles", _sum(hubs), C_ALU, "metal", 5, (0, -330, 0)))
-
-    # wheel belt guard
-    bg = bx(-P["wheel_u"] - 20, P["wheel_u"] + 20, pv0 - 12, pv0, wc - 20, wc + 8)
-    bg = _fillet_try(bg, _par(bg, Axis.Y), [13.0, 10.0, 6.0])
-    bg = _fillet_try(bg, _face_edges(bg, Axis.Y, 0), [2.0, 1.0])
-    items.append(("Wheel belt guard", bg, C_DARK, "plastic", 5, (0, -470, 0)))
-
-    # drive gearmotor with encoder: gearbox, can, cap
+    # drive gearmotor on the housing's outer wall, coaxial with the +u axle: gearbox, can, encoder cap
     u, rd = P["wheel_u"], P["drive_d"] / 2
-    va, vb = pv0 - 12, pv0 - 12 - P["drive_l"]
+    va, vb = hv0, hv0 - P["drive_l"]
     gbox = cyl_v(u, wc, va - 22, va, rd)
     gbox = _fillet_try(gbox, _face_edges(gbox, Axis.Y, 0), [1.5, 1.0])
     items.append(("Drive gearbox", gbox, C_ALU_D, "metal", 6, (0, -600, 0)))
@@ -216,85 +212,46 @@ def _lower_truck(D):
     cap = cyl_v(u, wc, vb, vb + 8, rd - 1.0)
     cap = _fillet_try(cap, _face_edges(cap, Axis.Y, 0), [3.0, 2.0, 1.0])
     items.append(("Drive encoder cap", cap, C_BLACK, "plastic", 6, (0, -600, 0)))
+    items.append(("Motor shaft", c["drive_motor"] - cyl_v(u, wc, vb - 1, va, rd + 1), C_STEEL, "metal", 6, (0, -600, 0)))
 
-    # guide rollers on the frame outer face, on clevis tabs
-    gr = P["guide_d"] / 2
-    g_ty, g_hw = [], []
-    for su in (-1, 1):
-        u = su * P["guide_u"]
-        t = cyl_w(u, -gr, -26.5, -4.5, gr) - cyl_w(u, -gr, -28, -3, gr - 4)
-        t = _fillet_try(t, [e for e in t.edges() if abs(_erad(e) - gr) < 0.5], [2.0, 1.0])
-        g_ty.append(t)
-        hw = cyl_w(u, -gr, -26, -5, gr - 4) + cyl_w(u, -gr, -31, 0, 2.5)
-        hw += bx(u - 9, u + 9, pv1, -gr, -30, -27) + bx(u - 9, u + 9, pv1, -gr, -4, -1)
-        g_hw.append(hw)
-    items.append(("Guide roller tyres", _sum(g_ty), C_RUBBER, "rubber", 7, (0, -380, -170)))
-    items.append(("Guide roller hubs and tabs", _sum(g_hw), C_ALU, "metal", 7, (0, -380, -170)))
+    items.append(("Guide roller tyres", c["guide_rollers"], C_RUBBER, "rubber", 7, (0, -380, -170)))
+    items.append(("Guide roller clevises (folded)", c["guide_clevises"], C_ALU, "metal", 7, (0, -380, -170)))
+    items.append(("Hook roller tyre", c["hook_roller"], C_RUBBER, "rubber", 7, (0, -380, -280)))
+    items.append(("Hook roller axle", c["hook_axle"], C_ALU, "metal", 7, (0, -380, -280)))
+    items.append(("Hook slider (sprung)", c["hook_slider"], C_GRAPH, "painted", 7, (0, -380, -280)))
+    items.append(("Hook preload spring and seat", c["hook_spring"] + c["spring_seat"], C_STEEL, "metal", 7, (0, -380, -230)))
 
-    # hook arm, hook roller and preload spring
-    hr = P["hook_d"] / 2
-    hc = D["hook_c"]
-    h0, h1 = P["hook_v"]
-    arm = bx(-15, 15, pv0, h1 + 3, w_lo, hc - hr - 2)
-    arm = _fillet_try(arm, _par(arm, Axis.Z), [4.0, 2.0])
-    arm += bx(-10, 10, h0 - 3, h0, hc - hr - 2, hc + 4) + bx(-10, 10, h1, h1 + 3, hc - hr - 2, hc + 4)
-    items.append(("Hook arm and clevis", arm, C_GRAPH, "painted", 7, (0, -380, -280)))
-    hroll = cyl_v(0, hc, h0 + 0.5, h1 - 0.5, hr) - cyl_v(0, hc, h0 - 1, h1 + 1, hr - 3)
-    hroll = _fillet_try(hroll, [e for e in hroll.edges() if abs(_erad(e) - hr) < 0.5], [1.5, 1.0])
-    items.append(("Hook roller tyre", hroll, C_RUBBER, "rubber", 7, (0, -380, -280)))
-    hpin = cyl_v(0, hc, h0 - 4, h1 + 4, 2.5) + cyl_v(0, hc, h0 + 0.5, h1 - 0.5, hr - 3)
-    items.append(("Hook roller hub and pin", hpin, C_ALU, "metal", 7, (0, -380, -280)))
-    spring = cyl_w(0, -15, hc - hr - 2, -10, 4.0)
-    for k in range(9):
-        z = hc - hr + 1 + 3.6 * k
-        spring += cyl_w(0, -15, z, z + 1.8, 5.2)
-    items.append(("Hook roller preload spring", spring, C_STEEL, "metal", 7, (0, -380, -230)))
-
-    # brush gearmotor housing and brush belt cover
-    mu, mv, mw = P["brush_motor"]
-    bm_w0 = wc + 16
-    hous = bx(-mu / 2, mu / 2, pv0 - 12 - mv, pv0 - 12, bm_w0 + 30, bm_w0 + 30 + mw)
-    hous = _fillet_try(hous, _par(hous, Axis.Y), [8.0, 5.0, 3.0])
-    hous = _fillet_try(hous, _face_edges(hous, Axis.Y, 0), [4.0, 2.0, 1.0])
-    for k in range(5):
-        vv = pv0 - 12 - 12 - 9 * k
-        hous -= bx(mu / 2 - 1.2, mu / 2 + 1, vv - 2, vv, bm_w0 + 42, bm_w0 + 30 + mw - 12)
-        hous -= bx(-mu / 2 - 1, -mu / 2 + 1.2, vv - 2, vv, bm_w0 + 42, bm_w0 + 30 + mw - 12)
-    items.append(("Brush gearmotor housing", hous, C_DARK, "plastic", 4, (0, -640, 140)))
-    blab = bx(-mu / 2 - 0.4, -mu / 2, pv0 - 12 - mv + 10, pv0 - 22, bm_w0 + 38, bm_w0 + 48)
-    items.append(("Brush gearmotor accent label", blab, C_ACCENT, "painted", 4, (0, -640, 140)))
-    bcov = bx(-22, 22, pv0 - 12, pv0, D["brush_w"] - 10, bm_w0 + 30 + mw)
-    bcov = _fillet_try(bcov, _par(bcov, Axis.Y), [10.0, 6.0, 3.0])
-    bcov = _fillet_try(bcov, _face_edges(bcov, Axis.Y, 0), [2.0, 1.0])
-    items.append(("Brush belt cover", bcov, C_GRAPH, "plastic", 4, (0, -500, 70)))
-
-    # IR edge sensors with dark lenses
     sens, lens = [], []
-    for s in (-1, 1):
-        a, b = sorted((s * hu, s * (hu + 22)))
-        h = bx(a, b, P["wheel_v"][0], P["wheel_v"][1], 45, 65) + bx(a, b, pv0, P["wheel_v"][0], 55, 65)
-        h = _fillet_try(h, _par(h, Axis.Y), [2.0, 1.0])
-        sens.append(h)
+    for sg in (-1, 1):
+        a, b = sorted((sg * hu, sg * (hu + 22)))
         lens.append(cyl_w((a + b) / 2, 12, 44.4, 45, 5.0))
-    items.append(("IR edge sensor housings", _sum(sens), C_BLACK, "plastic", 10, (0, -380, 110)))
+    items.append(("IR edge sensor housings", c["sensors"], C_BLACK, "plastic", 10, (0, -380, 110)))
     items.append(("IR edge sensor lenses", _sum(lens), "#3B0D12", "screen", 10, (0, -380, 110)))
+    items.append(("Sensor brackets", c["sensor_brackets"], C_GRAPH, "painted", 10, (0, -380, 110)))
+    items.append(("Beam end cleats", c["cleats"], C_ALU, "metal", 15, (0, -300, 380)))
+    items.append(("Beam cleat bolts", c["cleat_bolts"], C_STEEL, "metal", 15, (0, -300, 420)))
 
-    # charge contacts facing the dock
-    pad = bx(-hu - 8, -hu, pv0, pv1 + 40, 90, 130)
-    pad = _fillet_try(pad, _par(pad, Axis.X), [2.0, 1.0])
-    items.append(("Charge contact block", pad, C_BLACK, "plastic", 13, (-140, -380, 0)))
-    strips = _sum(bx(-hu - 8.6, -hu - 8, vv, vv + 8, 96, 124) for vv in (-20, -4, 8))
-    items.append(("Charge contact plates (copper)", strips, C_COPPER, "metal", 13, (-140, -380, 0)))
-
-    # emergency stop on the plate top edge
-    base = bx(-95, -55, pv0 - 18, pv1 + 17, w_hi, w_hi + 26)
-    base = _fillet_try(base, _par(base, Axis.Z), [4.0, 2.0])
-    base = _fillet_try(base, _face_edges(base, Axis.Z, -1), [2.0, 1.0])
+    # emergency stop: yellow base ring on the plate, red mushroom button
+    base = cyl_v(95, 185, pv0 - 8, pv0, 26.0)
     items.append(("Emergency stop base", base, C_YELLOW, "plastic", 15, (0, -380, 190)))
-    ev = (pv0 - 18 + pv1 + 17) / 2
-    mush = cyl_w(-75, ev, w_hi + 26, w_hi + 33, 8.0) + cyl_w(-75, ev, w_hi + 33, w_hi + 44, 17.0)
-    mush = _fillet_try(mush, _face_edges(mush, Axis.Z, -1), [5.0, 3.0, 2.0])
+    mush = cyl_v(95, 185, pv0 - 40, pv0 - 8, 20.0)
+    mush = _fillet_try(mush, _face_edges(mush, Axis.Y, 0), [5.0, 3.0, 2.0])
     items.append(("Emergency stop button", mush, C_RED, "plastic", 15, (0, -380, 230)))
+    items.append(("Emergency stop inner body", c["estop"] - cyl_v(95, 185, pv0 - 40, pv0, 21.0), C_DARK, "plastic", 15, (0, -380, 190)))
+
+    if lower:
+        mu, mv, mw = P["brush_motor"]
+        items.append(("Brush drive pulleys", c["brush_pulleys"], C_ALU_D, "metal", 4, (0, -500, 70)))
+        items.append(("Brush drive belt", c["brush_belt"], C_BLACK, "rubber", 4, (0, -500, 70)))
+        bm = _fillet_try(c["brush_motor"], _par(c["brush_motor"], Axis.Y), [8.0, 5.0, 3.0])
+        items.append(("Brush gearmotor", bm, C_DARK, "plastic", 4, (0, -640, 140)))
+        blab = bx(-mu / 2 - 0.4, -mu / 2, hv0 - mv + 10, hv0 - 22, 117.0 - 8, 117.0 + 8)
+        items.append(("Brush gearmotor accent label", blab, C_ACCENT, "painted", 4, (0, -640, 140)))
+        items.append(("Dock contact bracket (folded)", c["contact_bracket"], C_ALU, "metal", 13, (-140, -380, 0)))
+        items.append(("Charge contact block", c["contact_pad"], C_BLACK, "plastic", 13, (-140, -380, 0)))
+        strips = _sum(bx(-138.6, -138, -22 + k * 14, -13 + k * 14, 96, 120) for k in range(3))
+        items.append(("Charge contact plates (copper)", strips, C_COPPER, "metal", 13, (-140, -380, 0)))
+        items.append(("Latch solenoid and pin", c["solenoid"], C_STEEL, "metal", 13, (-140, -380, 60)))
     return items
 
 
@@ -319,6 +276,7 @@ def _robot_body(D):
     beam = bx(-b / 2, b / 2, pv1, L - pv1, w0, w1)
     beam = _fillet_try(beam, _par(beam, Axis.Y), [2.5, 1.5])
     beam -= bx(-b / 2 + t, b / 2 - t, pv1 - 1, L - pv1 + 1, w0 + t, w1 - t)
+    beam -= _tr(True)["beam_holes"] + mirror_v(_tr(False)["beam_holes"], P)      # cleat bolt holes, as model.py
     items.append(("Chassis beam (anodized aluminum)", beam, C_ALU, "metal", 1, (0, 0, 380)))
     stripe = bx(-b / 2 - 0.4, -b / 2, 700, 1880, w1 - 16, w1 - 11)
     items.append(("Beam accent stripe", stripe, C_ACCENT, "painted", 1, (0, 0, 380)))
@@ -351,26 +309,20 @@ def _robot_body(D):
     for su in (-1, 1):
         hood += cyl_v(su * ue, wc0 + 0.5, v0 - 5, v1 + 5, 1.8)
     items.append(("Brush hood (powder-coated)", hood, C_WHITE, "painted", 3, (0, 0, 200)))
-    hang = _sum(bx(-12, 12, vv, vv + 24, bw + r1 - 1.2, w0) for vv in (300, 820, 1420, 1950))
-    items.append(("Hood hangers", hang, C_ALU_D, "metal", 3, (0, 0, 290)))
+    bh = _brush_and_hood(P)
+    items.append(("Hood spacers (nylon, on M5 screws)", bh["hood_spacers"], C_WHITE, "plastic", 15, (0, 0, 290)))
+    items.append(("Brush stub shafts", bh["shafts"], C_ALU, "metal", 2, (0, 0, 0)))
     hlab = bx(-r1 - 2, 0, 700, 1880, wc0 + 12, wc0 + 19) & (
         cyl_v(0, bw, 690, 1890, r1 + 0.45) - cyl_v(0, bw, 680, 1900, r1 - 0.2))
     items.append(("Hood accent band", hlab, C_ACCENT, "painted", 3, (0, 0, 200)))
 
-    # sunshade frame over the pack and controller (hood sheet, BOM 3)
-    pw_ = P["pack"][2]
-    st = w1 + pw_ + 6
+    # sunshade over the pack and controller, on four spacer posts screwed into the beam's top wall (model.py)
+    st = D["shade_w"]
     sv0, sv1 = P["pack_v"] - 20, P["ebox_v"] + P["ebox"][1] + 20
     shade = bx(-60, 60, sv0, sv1, st, st + P["shade_t"])
     shade = _fillet_try(shade, _par(shade, Axis.Z), [6.0, 3.0])
-    for su in (-1, 1):
-        a, c = sorted((su * 60, su * 58.8))
-        shade += bx(a, c, sv0 + 6, sv1 - 6, st - 20, st)
-        for vv in (sv0 + 4, sv1 - 19):
-            shade += bx(a, c, vv, vv + 15, w1, st)
-    for vv in (sv0 + 4, sv1 - 19):
-        shade += bx(-60, 60, vv, vv + 15, w1, w1 + 3)
     items.append(("Sunshade (powder-coated)", shade, C_WHITE, "painted", 3, (0, 0, 800)))
+    items.append(("Sunshade posts", bh["shade_posts"], C_STEEL, "metal", 15, (0, 0, 700)))
 
     # 8 LiFePO4 pack, label and straps
     pu, pvl, pw = P["pack"]
@@ -387,10 +339,9 @@ def _robot_body(D):
         bx(-pu / 2 - 0.8, -pu / 2 - 0.5, pv_ + 50, pv_ + 80, w1 + 40, w1 + 48)
     items.append(("Pack label print", pband, C_ACCENT, "paper", 8, (0, 0, 580)))
     straps = None
-    for vv in (pv_ + 14, pv_ + pvl - 34):
-        s = bx(-pu / 2 - 1.5, pu / 2 + 1.5, vv, vv + 20, w1, w1 + pw + 1.5) - \
-            bx(-pu / 2, pu / 2, vv - 1, vv + 21, w1 - 1, w1 + pw)
-        straps = s if straps is None else straps + s
+    for vv in (pv_ + 30, pv_ + pvl - 50):                  # as model.py: round the beam and the pack
+        sx_ = bx(-pu / 2 - 2, pu / 2 + 2, vv, vv + 20, w0 - 2, w1 + pw + 2) - bx(-pu / 2, pu / 2, vv - 1, vv + 21, w0, w1 + pw)
+        straps = sx_ if straps is None else straps + sx_
     items.append(("Pack straps (webbing)", straps, C_BLACK, "fabric", 15, (0, 0, 620)))
 
     # 9 controller: IP65 box, clear side window, board behind it, main switch, glands
@@ -434,43 +385,27 @@ def _robot_body(D):
 
 
 # ---------------- dock, end stops (local) ----------------
-def _dock():
+def _dock(Cm):
+    """Dock and anemometer from model.py's constructable parts (rails, cross members, rail brackets and
+    spacers, frame clamps, ties, vertical legs on foot plates, contact post and latch tab, vertical mast
+    in two clamps), with the panel, charger and anemometer cups dressed for the renders."""
     L = P["mod_l"]
-    u_end = -P["gap"]
-    u_rail = u_end - P["dock_rail_l"]
-    u0 = P["dock_u0"]
-    bot = P["frame_proud"] - P["frame_d"]
+    D = derived(P)
+    uf, ur, un = D["cross_u"]
+    cs, ct, bot = P["cross"], P["cross_top"], D["frame_bot"]
     items = []
-    rails = frame_edge(u_rail, u_end, P) + mirror_v(frame_edge(u_rail, u_end, P), P)
-    items.append(("Dock rails (aluminum C-section)", rails, C_ALU, "metal", 11, (0, 0, 0)))
-    cross = []
-    for uc in (u0, u_rail, u_end - 100):
-        c = bx(uc, uc + 40, 30, L - 30, bot - 40, bot)
-        c = _fillet_try(c, _par(c, Axis.Y), [2.0, 1.0])
-        cross.append(c)
-    for uc in (u_rail, u_end - 100):
-        for vc in (5, L - 35):
-            cross.append(bx(uc, uc + 40, vc, vc + 30, bot - 40, bot))
-    items.append(("Dock cross members and posts", _sum(cross), C_ALU_D, "metal", 11, (0, 0, -140)))
-    bay = bx(u0, u_rail + 40, 90, 130, bot - 30, bot - 10) + bx(u0, u_rail + 40, 640, 680, bot - 30, bot - 10)
-    items.append(("Dock panel bay members", bay, C_ALU_D, "metal", 11, (0, 0, -140)))
-    cl = []
-    for (va, vb_) in ((30, 70), (L - 70, L - 30)):
-        c = bx(-P["gap"] - 10, 110, va, vb_, bot - 20, bot) + bx(60, 110, va, vb_, bot, bot + 12)
-        cl.append(c)
-    items.append(("Dock clamps", _sum(cl), C_GRAPH, "painted", 11, (220, 0, -60)))
-    kn = _sum(_hex_w(85, (va + vb_) / 2, bot - 26, bot - 20, 13.0) for (va, vb_) in ((30, 70), (L - 70, L - 30)))
-    items.append(("Dock clamp bolts", kn, C_STEEL, "metal", 11, (220, 0, -100)))
-    legs = []
-    for uc, vc in ((u_rail + 20, 300.0), (u0 + 20, 300.0), (u_rail + 20, L - 330.0), (u0 + 20, L - 330.0)):
-        legs.append(leg_local(uc, vc, bot - 40, P))
-    items.append(("Dock legs (aluminum)", _sum(legs), C_ALU_D, "metal", 11, (0, 0, 0)))
+    items.append(("Dock rails (aluminum C-section)", Cm["rails"].shape, C_ALU, "metal", 11, (0, 0, 0)))
+    items.append(("Dock cross members and ties", Cm["cross"].shape + Cm["ties"].shape, C_ALU_D, "metal", 11, (0, 0, -140)))
+    items.append(("Dock rail brackets, spacers and shims", Cm["rail_brackets"].shape + Cm["spacers"].shape, C_STEEL, "metal", 11, (0, 0, -80)))
+    items.append(("Dock clamps (bar and jaw)", Cm["clamp_bars"].shape + Cm["clamp_jaws"].shape, C_GRAPH, "painted", 11, (220, 0, -60)))
+    items.append(("Dock bolts", Cm["dock_bolts"].shape, C_STEEL, "metal", 11, (220, 0, -100)))
+    items.append(("Dock legs (aluminum square tube, foot plates)", Cm["legs"].shape, C_ALU_D, "metal", 11, (0, 0, 0)))
 
-    # 12 PV panel: frame, backsheet and cells
+    # 12 PV panel on the ties: frame, backsheet and cells
     pu, pvl, pw = P["panel"]
-    pc = (u0 + u_rail + 40) / 2
+    pc = (uf + cs + ur) / 2
     pv0, pv1 = 120, 120 + pvl
-    pw0, pw1 = bot - 10, bot - 10 + pw
+    pw0, pw1 = ct + 20, ct + 20 + pw
     fr = bx(pc - pu / 2, pc + pu / 2, pv0, pv1, pw0, pw1) - bx(pc - pu / 2 + 12, pc + pu / 2 - 12, pv0 + 12, pv1 - 12, pw0 - 1, pw1 + 1)
     fr += bx(pc - pu / 2 + 11, pc + pu / 2 - 11, pv0 + 11, pv1 - 11, pw0, pw0 + 3)
     items.append(("Dock panel frame (aluminum)", fr, C_ALU, "metal", 12, (0, 0, 240)))
@@ -485,57 +420,46 @@ def _dock():
         cells -= bx(pc - pu, pc + pu, vv - 1.2, vv + 1.2, pw1 - 5, pw1)
     items.append(("Dock panel cells (glass)", cells, C_CELL, "screen", 12, (0, 0, 240)))
 
-    # 13 charger box, charge light, dock contacts and latch pin
-    ch = bx(u0 + 40, u0 + 160, 760, 880, bot - 60, bot + 20)
+    # 13 charger box on the far cross member's +u face, charge light, contact post with block and latch tab
+    cu0 = uf + cs
+    ch = bx(cu0, cu0 + 120, 760, 880, ct - cs - 14, ct + 26)
     ch = _fillet_try(ch, _par(ch, Axis.Z), [5.0, 3.0])
     ch = _fillet_try(ch, _face_edges(ch, Axis.Z, -1), [3.0, 2.0, 1.0])
-    ch -= bx(u0 + 38, u0 + 162, 758, 882, bot + 9, bot + 9.6) - bx(u0 + 40.6, u0 + 159.4, 760.6, 879.4, bot - 70, bot + 30)
     items.append(("Dock charger box", ch, "#DDE1E5", "plastic", 13, (0, 0, 280)))
-    chl = bx(u0 + 60, u0 + 140, 780, 830, bot + 20, bot + 20.4)
-    items.append(("Dock charger label", chl, C_ACCENT, "painted", 13, (0, 0, 280)))
-    chled = cyl_w(u0 + 130, 860, bot + 20, bot + 22.5, 3.5)
-    items.append(("Dock charge light (lit)", chled, C_LED_G, "emissive", 13, (0, 0, 280)))
-    cb = bx(u_rail + 40, u_rail + 60, -P["plate_gap"] - P["plate_t"] - 10, 40, 90, 130)
-    cb = _fillet_try(cb, _par(cb, Axis.Y), [2.0, 1.0])
-    cb += bx(u_rail + 40, u_rail + 60, -37, -27, bot, 90) + bx(u_rail + 40, u_rail + 60, -37, 0, bot, bot + 6)
-    items.append(("Dock contact post", cb, C_BLACK, "plastic", 13, (0, -160, 160)))
-    tips = _sum(cyl_u(u_rail + 60, u_rail + 66, vv, 110, 3.0) for vv in (-16, 0, 12))
-    tips += cyl_u(u_rail + 60, u_rail + 82, 30, 102, 3.0)
-    items.append(("Dock spring contacts and latch pin", tips, C_COPPER, "metal", 13, (0, -160, 160)))
+    items.append(("Dock charger label", bx(cu0 + 20, cu0 + 100, 780, 830, ct + 26, ct + 26.4), C_ACCENT, "painted", 13, (0, 0, 280)))
+    items.append(("Dock charge light (lit)", cyl_w(cu0 + 90, 860, ct + 26, ct + 28.5, 3.5), C_LED_G, "emissive", 13, (0, 0, 280)))
+    post = Cm["contact_post"].shape + Cm["dock_contacts"].shape + Cm["latch_tab"].shape
+    items.append(("Dock contact post, block and latch tab", post, C_BLACK, "plastic", 13, (0, -160, 160)))
+    uf_c = ur + cs + 20
+    tips = _sum(bx(uf_c, uf_c + 0.8, vv, vv + 10, 96, 122) for vv in (-30, -10, 10))
+    items.append(("Dock spring contact plates (copper)", tips, C_COPPER, "metal", 13, (0, -160, 160)))
 
-    # 16 anemometer: mast, hub, three cups
-    mv = L - 200
-    mu_ = u0 + 20
-    mh = P["mast_h"]
-    mast = cyl_w(mu_, mv, bot, bot + mh, 12.0) + bx(mu_ - 20, mu_ + 20, mv - 20, mv + 20, bot, bot + 4)
-    items.append(("Anemometer mast", mast, C_ALU, "metal", 16, (0, 0, 380)))
-    hub = cyl_w(mu_, mv, bot + mh, bot + mh + 26, 11.0)
+    # 16 anemometer: vertical mast in two clamps on the far cross member (model.py), hub and three cups
+    t = radians(P["tilt"])
+    up = (0.0, sin(t), cos(t))
+    base = (uf - 12, L - 200, ct - cs)
+    top = tuple(base[i] + P["mast_h"] * up[i] for i in range(3))
+    items.append(("Anemometer mast", tube(base, top, 12.0), C_ALU, "metal", 16, (0, 0, 380)))
+    items.append(("Anemometer mast clamps", Cm["mast_clamps"].shape, C_STEEL, "metal", 16, (0, 0, 380)))
+    hub = cyl_w(0, 0, 0, 26, 11.0)
     hub = _fillet_try(hub, _face_edges(hub, Axis.Z, -1), [4.0, 2.0])
     cups = hub
     for k in range(3):
         a = 120 * k
-        arm = Pos(mu_, mv, bot + mh + 18) * Rot(0, 0, a) * Pos(22, 0, 0) * Rot(0, 90, 0) * Cylinder(2.0, 44)
+        arm = Pos(0, 0, 18) * Rot(0, 0, a) * Pos(22, 0, 0) * Rot(0, 90, 0) * Cylinder(2.0, 44)
         cup = (Sphere(14) - Sphere(12.8)) & Pos(-7.5, 0, 0) * Box(15, 30, 30)
-        cup = Pos(mu_, mv, bot + mh + 18) * Rot(0, 0, a) * Pos(44, 0, 0) * Rot(0, 0, 90) * cup
+        cup = Pos(0, 0, 18) * Rot(0, 0, a) * Pos(44, 0, 0) * Rot(0, 0, 90) * cup
         cups = cups + arm + cup
-    items.append(("Anemometer cups and hub", cups, C_WHITE, "plastic", 16, (0, 0, 420)))
+    items.append(("Anemometer cups and hub", Pos(*top) * Rot(-P["tilt"], 0, 0) * cups, C_WHITE, "plastic", 16, (0, 0, 420)))
     return items
 
 
 def _stops(u_end):
-    top = P["frame_proud"]
-    bot = top - P["frame_d"]
-    sl, sh = P["stop_l"], P["stop_h"]
-    lo = bx(u_end - sl, u_end, 0, P["lip"], top, top + sh) + bx(u_end - sl, u_end, -12, 0, bot - 25, top + sh) + \
-        bx(u_end - sl, u_end, 0, P["lip"], bot - 25, bot)
-    lo = _fillet_try(lo, _face_edges(lo, Axis.Z, -1), [3.0, 2.0])
-    buf = bx(u_end - sl - 10, u_end - sl, 2, P["lip"] - 2, top + 8, top + sh - 6)
-    buf = _fillet_try(buf, _face_edges(buf, Axis.X, 0), [3.0, 2.0])
-    bolt = _hex_v(u_end - sl / 2, -16, -12, bot - 5, 10.0)
-    return [("End stop blocks", lo, C_GRAPH, "painted", 14, (0, -220, 0)),
-            ("End stop blocks, upper", mirror_v(lo, P), C_GRAPH, "painted", 14, (0, 220, 0)),
-            ("End stop rubber buffers", buf + mirror_v(buf, P), C_RUBBER, "rubber", 14, (-120, 0, 0)),
-            ("End stop clamp bolts", bolt + mirror_v(bolt, P), C_STEEL, "metal", 14, (0, 0, -120))]
+    """Clamp-on end stops from model.py: top block, outer plate and bottom jaw, clamp screw, rubber buffer."""
+    S = _model_stops(u_end, P)
+    return [("End stop blocks (clamp-on, three-piece)", S["stop_blocks"].shape, C_GRAPH, "painted", 14, (0, 0, -120)),
+            ("End stop clamp screws", S["stop_screws"].shape, C_STEEL, "metal", 14, (0, 0, -200)),
+            ("End stop rubber buffers", S["stop_buffers"].shape, C_RUBBER, "rubber", 14, (-120, 0, 0))]
 
 
 # ---------------- context (local, not in the BOM) ----------------
@@ -586,15 +510,6 @@ def _structure_world():
             z += H0
             posts.append(Pos(x, y, z / 2) * Cylinder(40, z))
             feet.append(Pos(x, y, 15) * Cylinder(110, 30))
-    # dock leg feet
-    bot = P["frame_proud"] - P["frame_d"]
-    u_rail = -P["gap"] - P["dock_rail_l"]
-    dfeet = []
-    t = radians(TILT)
-    for uc, vc in ((u_rail + 20, 300.0), (P["dock_u0"] + 20, 300.0), (u_rail + 20, L - 330.0), (P["dock_u0"] + 20, L - 330.0)):
-        h = H0 + vc * sin(t) + (bot - 40) * cos(t)
-        x, y, _ = t_vec(uc, vc - h * sin(t), bot - 40 - h * cos(t))
-        dfeet.append(Pos(x, y, 4) * Cylinder(45, 8))
     # ground patch around the footprint
     xs, ys = [], []
     for u in (P["dock_u0"], row_l):
@@ -605,7 +520,7 @@ def _structure_world():
     x0, x1, y0, y1 = min(xs) - m, max(xs) + m, min(ys) - m, max(ys) + m
     ground = Pos((x0 + x1) / 2, (y0 + y1) / 2, -15) * Box(x1 - x0, y1 - y0, 30)
     ground = _fillet_try(ground, _face_edges(ground, Axis.Z, -1), [10.0, 5.0])
-    return purl + raft, _sum(posts), _sum(feet), _sum(dfeet), ground
+    return purl + raft, _sum(posts), _sum(feet), ground
 
 
 def product_parts(p=PARAMS):
@@ -623,13 +538,14 @@ def product_parts(p=PARAMS):
     # robot body (shell)
     for name, s, c, m, b, e in _robot_body(D):
         add(name, s, c, m, b, "shell", e, robot=True)
-    # lower truck and brush drive (internal) and the upper truck, its mirror (shell)
-    for name, s, c, m, b, e in _lower_truck(D):
+    # lower truck and brush drive (internal) and the upper truck, its mirror image (shell)
+    for name, s, c, m, b, e in _truck_items(D, True):
         add(name + ", lower", s, c, m, b, "internal", e, robot=True)
-        if not name.startswith(("Brush gearmotor", "Brush belt")):
-            add(name + ", upper", mirror_v(s, P), c, m, b, "shell", (e[0], -e[1], e[2]), robot=True)
-    # dock and end stops (accessory)
-    for name, s, c, m, b, e in _dock():
+    for name, s, c, m, b, e in _truck_items(D, False):
+        add(name + ", upper", mirror_v(s, P), c, m, b, "shell", (e[0], -e[1], e[2]), robot=True)
+    # dock and end stops (accessory) from the constructable model
+    Cm = build_components(P)
+    for name, s, c, m, b, e in _dock(Cm):
         e = (e[0] + 300, e[1], e[2])                 # exploded view: dock drawn nearer the robot
         add(name, s, c, m, b, "context" if name.startswith("Dock legs") else "accessory", e)
     row_l = N_MOD * P["mod_w"] + (N_MOD - 1) * P["gap"]
@@ -642,11 +558,10 @@ def product_parts(p=PARAMS):
     add("Reference PV module backsheet", backs, C_BACK, "paper", None, "context")
     add("Reference PV module cells (glass)", cells, C_CELL, "screen", None, "context")
     add("Dust film, not yet cleaned (illustrative)", dust, C_DUST, "paper", None, "context")
-    struct, posts, feet, dfeet, ground = _structure_world()
+    struct, posts, feet, ground = _structure_world()
     add("Table purlins and rafters (galvanized steel)", struct, C_STEEL, "metal", None, "context")
     add("Table posts (galvanized steel)", posts, C_STEEL, "metal", None, "context", world=True)
     add("Post footings (concrete)", feet, C_CONC, "paper", None, "context", world=True)
-    add("Dock leg feet", dfeet, C_GRAPH, "rubber", 11, "context", world=True)
     add("Ground patch (gravel)", ground, C_GROUND, "paper", None, "context", world=True)
     return out
 

@@ -3,9 +3,9 @@ doc_id: DRN-BLD-001
 title: DustRunner prototype build plan
 project: DustRunner
 doc_type: Build plan
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,6 +17,10 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: Budget treated as a value-engineering target
+  - version: "0.3"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: 'General arrangement reissued at Rev P4; no change to the steps or pictures'
 ---
 
 # DustRunner prototype build plan
@@ -657,7 +661,7 @@ Stop at each point. Carry on only when everything listed is true.
 
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`, 123 checks); STEP and STL exports in `cad/step/` and `cad/stl/`.
 - Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/DRN-DWG-101` to `DRN-DWG-119`.
-- General arrangement: `cad/drawings/DRN-DWG-001.pdf`, Rev P3.
+- General arrangement: `cad/drawings/DRN-DWG-001.pdf`, Rev P4.
 - Calculations: `docs/04-calcs/01-sizing.md` (DRN-CAL-001 v0.3) and `docs/04-calcs/sizing.py`; mass [A3], [A4], hook preload [C0], wheel loads [C1], [C2], wind and latch [D1], [D2], end stop [D4], energy [F1] to [F7], cost [I1].
 - Bill of materials: `bom/bom.csv`.
 - Decisions: `docs/decisions/0003-design-for-construction.md` (DRN-DDR-003), with DRN-DDR-001 and DRN-DDR-002; open decisions in `docs/06-design-decisions.md` (DRN-DEC-001).

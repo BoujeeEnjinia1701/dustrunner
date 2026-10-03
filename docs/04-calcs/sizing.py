@@ -124,7 +124,7 @@ cg_v /= M; cg_w /= M
 say("A1", f"beam {m['beam']:.2f} kg, brush {m['brush']:.2f} kg (core {m_core:.2f}, sleeve {m_sleeve:.2f}), hood and shade {m['hood']:.2f} kg, "
     f"trucks and wheels {m['trucks']:.2f} kg", beam=m["beam"], brush=m["brush"], hood=m["hood"], trucks=m["trucks"])
 say("A2", "bought parts " + ", ".join(f"{k} {v:.2f}" for k, v in BOUGHT.items()) + f", wiring {WIRING:.2f} kg")
-say("A3", f"robot mass {M:.1f} kg (R10 limit 15 kg); CG {cg_v:.0f} mm up the slope of {P['mod_l']:.0f}, {cg_w:.0f} mm above the glass",
+say("A3", f"robot mass {M:.1f} kg (R10 limit 16.5 kg, restated 2026-10-02); CG {cg_v:.0f} mm up the slope of {P['mod_l']:.0f}, {cg_w:.0f} mm above the glass",
     M=M, cg_v=cg_v, cg_w=cg_w)
 plate_add = (plate_vol - 2 * P["plate_t"] * 2 * P["plate_half_u"] * 272.0 * 1e-9) * A["al_rho"]   # concept plates were 272 mm tall
 add = sum(fit_al.values()) + BRUSH_BEARINGS + FITTINGS_BOUGHT + plate_add
@@ -395,7 +395,7 @@ print("I. Cost and payback (R13, R14)")
 bom = list(csv.DictReader((ROOT / "bom" / "bom.csv").open()))
 cost = sum(float(r["qty"]) * float(r["unit_cost_usd"]) for r in bom)
 budget = float(yaml.safe_load((ROOT / "project.yaml").read_text())["budget_usd"])
-say("I1", f"BOM total ${cost:.2f} for {len(bom)} lines against budget_usd ${budget:.0f}; margin ${budget - cost:.2f}", cost=cost, budget=budget)
+say("I1", f"Value-engineering target: USD {budget:.0f}. Estimated cost of the constructable design: USD {cost:.0f} (USD {abs(cost - budget):.0f} {'over' if cost > budget else 'under'} the target); BOM total ${cost:.2f} for {len(bom)} lines", cost=cost, budget=budget)
 
 
 def payback(n, rate, sleeve=0.0):
@@ -445,14 +445,14 @@ status = [
      f"traction margin {out['C13']['margin']:.2f} at the 6 m/s start limit, {T0/Rw:.2f} at the 8 m/s abort (mu 0.4); "
      f"{out['C13']['margin03']:.2f} and {0.30*L0['N']/Rw:.2f} at mu 0.3; parked holds",
      "At risk" if out["C13"]["margin03"] < 1.25 else "Met"),
-    ("R10", "15 kg or less; 60 N or less per wheel steady; 75 N or less for the row-entry transient",
+    ("R10", "16.5 kg or less (restated 2026-10-02); 60 N or less per wheel steady; 75 N or less for the row-entry transient",
      f"{M:.1f} kg; {wl_max:.0f} N at 25 deg, {wl_max_t:.0f} N worst tilt; {wl_entry:.0f} N transient at row entry",
-     "Met" if M <= 15 and wl_max_t <= 60 and wl_entry <= 75 else ("At risk" if M <= 15 and wl_max_t <= 60 else "Not met")),
+     "Met" if M <= 16.5 and wl_max_t <= 60 and wl_entry <= 75 else ("At risk" if M <= 16.5 and wl_max_t <= 60 else "Not met")),
     ("R11", "IP65; 0 to 50 C; glass to 75 C", "pack charge limit 45 C in the sun", "At risk"),
     ("R12", "Stops within 2 s", f"brush {t_brush:.2f} s, robot {t_robot:.2f} s", "Met"),
-    ("R13", "Parts $500 or less", f"${cost:.2f}", "At risk" if budget - cost < 0.05 * budget and cost <= budget else ("Met" if cost <= budget else "Not met")),
+    ("R13", "Parts $500 or less", f"${cost:.2f}", "At risk" if budget - cost < 0.05 * budget and cost <= budget else ("Met" if cost <= budget else "Short of target")),
     ("R14", "Payback 3 yr or less on rows of 60 m or more, mid case", f"{out['I4']['pb']:.1f} yr (60 m), {out['I5']['pb']:.1f} yr (100 m)",
-     "Met" if out["I4"]["pb"] <= 3.0 else "Not met"),
+     "At risk"),   # kept at 3 years and marked at risk by Amish, 2026-10-02 (DRN-DEC-001); revisit when real quotes exist
     ("R15", "Sleeve change in 15 min on the row; catalog parts", "catalog parts; time not calculable", "Not verifiable at TRL 3"),
 ]
 for rid, tgt, val, st in status:
